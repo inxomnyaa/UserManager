@@ -24,6 +24,7 @@ class FriendCommand extends BaseCommand
         $this->registerSubCommand(new FriendRemoveCommand("remove", "Remove a friend"));
         $this->registerSubCommand(new FriendAcceptCommand("accept", "Accept a friend request"));
         $this->registerSubCommand(new FriendDenyCommand("deny", "Decline a friend request"));
+        $this->registerSubCommand(new FriendRequestsCommand("requests", "View friend requests"));
     }
 
     /**
