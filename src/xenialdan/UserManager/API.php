@@ -206,7 +206,7 @@ class API
                 }
                 case "Blocked users":
                 {
-                    API::openBlockedListUI($player);
+                    API::openBlockedListUI($player, $form);
                     break;
                 }
                 default:
