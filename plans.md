@@ -1,0 +1,21 @@
+User management (Look at hive - they are similar to your old code)
+- friends
+- add friends
+- friend list, informations
+- party? /party invite etc
+- message friends privately / when offline
+- get notifications when joining / receiving a message
+- ban users and manage bans
+- scheduled bans (unban after time)
+- xuid, name bans
+- ban reasons
+- moderator tools
+- warnings and warn point system
+- predefined warns / warn templates
+- books containing informations about warns?
+- "memories" book?
+- most online time / last logins?
+- ban evasion detection
+- report system
+- user server settings
+- user cosmetic settings (i.e. nickname on server)
