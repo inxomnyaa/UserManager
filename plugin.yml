@@ -1,0 +1,17 @@
+---
+name: UserManager
+main: xenialdan\UserManager\Loader
+version: 0.0.0
+api: [3.9]
+load: POSTWORLD
+authors:
+  - XenialDan
+description: User management made easy
+website: https://github.com/thebigsmileXD/UserManager
+permissions:
+  usermanager:
+    default: true
+    children:
+      usermanager.version:
+        default: true
+...
