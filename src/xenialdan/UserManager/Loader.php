@@ -7,7 +7,11 @@ namespace xenialdan\UserManager;
 use pocketmine\plugin\PluginBase;
 use poggit\libasynql\DataConnector;
 use poggit\libasynql\libasynql;
+use xenialdan\UserManager\commands\BlockCommand;
+use xenialdan\UserManager\commands\FriendCommand;
+use xenialdan\UserManager\commands\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
+use xenialdan\UserManager\listener\BaseEventListener;
 
 class Loader extends PluginBase
 {
@@ -15,10 +19,10 @@ class Loader extends PluginBase
     private static $instance = null;
     /** @var DataConnector */
     private $database;
-    /**
-     * @var Queries
-     */
-    private $queries;
+    /** @var Queries */
+    public static $queries;
+    /** @var UserStore */
+    public static $userstore;
 
     /**
      * Returns an instance of the plugin
@@ -39,7 +43,10 @@ class Loader extends PluginBase
         self::$instance = $this;
         $this->saveDefaultConfig();
         $this->getServer()->getCommandMap()->registerAll("UserManager", [
-            new UserManagerCommand("usermanager", "UserManager help"),
+            new UserManagerCommand("usermanager", "UserManager help", ["um"]),
+            new FriendCommand("friend", "Open friend list or manage friends"),
+            new BlockCommand("block", "Block users"),
+            new UnblockCommand("unblock", "Unblock users"),
         ]);
     }
 
@@ -50,7 +57,12 @@ class Loader extends PluginBase
             "sqlite" => "sqlite.sql",
             "mysql" => "mysql.sql"
         ]);
-        $this->queries = new Queries();
+        //create tables
+        self::$queries = new Queries();
+        //User store
+        self::$userstore = new UserStore();
+        //events
+        $this->getServer()->getPluginManager()->registerEvents(new BaseEventListener(), $this);
         #$this->database->executeGeneric(Queries::INITIALIZE_TABLES_PLAYER);
     }
 

@@ -19,6 +19,7 @@ class UserManagerCommand extends BaseCommand
     {
         $this->setPermission("usermanager");
         $this->registerSubCommand(new VersionCommand("version", "UserManager version"));
+        $this->registerSubCommand(new ListUserCommand("listuser", "List all users"));
     }
 
     /**

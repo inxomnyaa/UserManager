@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace xenialdan\UserManager;
 
+use pocketmine\Player;
+
 class User
 {
 
     private $id, $username, $ip, $flags = [];
+    private $banned = false;
 
-    public function __construct($id = -1, string $username, string $ip, /*PermissionFlags*/
-                                $flags)
+    public function __construct($id = -1, string $username, string $ip, array/*PermissionFlags*/
+    $flags = [])
     {
         $this->id = $id;
         $this->username = $username;
@@ -50,6 +53,47 @@ class User
         return $this->username;
     }
 
+    /**
+     * @return string
+     */
+    public function getRealUsername(): string
+    {
+        return $this->isOnline() ? $this->getPlayer()->getName() : $this->username;
+    }
+
+    public function getPlayer(): ?Player
+    {
+        return Loader::getInstance()->getServer()->getOfflinePlayer($this->username)->getPlayer();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOnline(): bool
+    {
+        return $this->getPlayer() instanceof Player && $this->getPlayer()->isOnline();
+    }
+
+    /**
+     * TODO
+     * @return bool
+     */
+    public function isBanned(): bool
+    {
+        return $this->banned;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayName(): string
+    {
+        $player = $this->getPlayer();
+        if ($player instanceof Player)
+            return $player->getDisplayName();
+        return $this->username;
+    }
+
     public function getIP()
     {
         return $this->ip;
@@ -61,6 +105,41 @@ class User
     public function setIp(string $ip)
     {
         $this->ip = $ip;
+    }
+
+    /**
+     * Returns an array containing Users and takes the results of Queries from users table as parameter
+     * @param array $rows
+     * @return User[]
+     */
+    public function getFriendFromUsers(array $rows = []): array
+    {
+        $friends = [];
+        foreach ($rows as $userData) {
+            if (($friend = Loader::$userstore::getUserByName($userData["username"])) instanceof User) {
+                $friends[] = $friend;
+            }
+        }
+        return $friends;
+    }
+
+    /**
+     * Returns an array containing Users and takes the results of Queries from the relationship table as parameter
+     * @param array $rows
+     * @param int $userId
+     * @return User[]
+     */
+    public function getFriendsFromRelationship(array $rows = [], int $userId): array
+    {
+        $friends = [];
+        foreach ($rows as $userData) {
+            $friendId = (int)$userData["user_one_id"];
+            if ($friendId === $userId) $friendId = (int)$userData["user_two_id"];
+            if (($friend = Loader::$userstore::getUserById($friendId)) instanceof User) {
+                $friends[] = $friend;
+            }
+        }
+        return $friends;
     }
 
     public function __toString(): string
