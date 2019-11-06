@@ -58,13 +58,17 @@ class Queries
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_MESSAGES);
     }
 
+    /**
+     * @param callable $function
+     */
     public function getUserList(callable $function): void
     {
         Loader::getDataProvider()->executeSelect(self::GET_EVERY_USER_DATA, [], $function);
     }
 
     /**
-     * @param $playername
+     * @param string $playername
+     * @param callable $function
      */
     public function getUserIdByName(string $playername, callable $function): void
     {
@@ -76,6 +80,7 @@ class Queries
 
     /**
      * @param string $playername
+     * @param callable $function
      */
     public function getUser(string $playername, callable $function): void
     {
@@ -90,6 +95,7 @@ class Queries
 
     /**
      * @param int $id
+     * @param callable $function
      */
     public function getUserById(int $id, callable $function): void
     {
@@ -102,6 +108,10 @@ class Queries
         #$user = new User($val["user_id"], $val["username"], $val["lastip"], []);//TODO IP -> use latest
     }
 
+    /**
+     * @param User $user
+     * @param callable $function
+     */
     public function addUser(User $user, callable $function): void
     {
         print "adduser";
@@ -115,6 +125,10 @@ class Queries
         });
     }
 
+    /**
+     * @param User $user
+     * @param callable $function
+     */
     public function updateUserIP(User $user, callable $function): void
     {
         Loader::getDataProvider()->executeInsert(self::ADD_USER_UPDATE_IP, [
@@ -127,6 +141,10 @@ class Queries
 
     /* AUTHORISATION */
 
+    /**
+     * @param User $user
+     * @param callable $function
+     */
     public function updateAuthCode(User $user, callable $function): void
     {
         $characters = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
@@ -139,6 +157,11 @@ class Queries
         });
     }
 
+    /**
+     * @param User $user
+     * @param string $auth
+     * @param callable $function
+     */
     public function checkAuthCode(User $user, string $auth, callable $function): void
     {
         Loader::getDataProvider()->executeSelect(self::CHECK_AUTH_CODE, [
@@ -188,8 +211,9 @@ class Queries
     }
 
     /**
-     * @param $id_issuer
-     * @param $id_target
+     * @param int $id_issuer
+     * @param int $id_target
+     * @param callable $function
      */
     public function hasUserRelation(int $id_issuer, int $id_target, callable $function): void
     {
@@ -207,6 +231,7 @@ class Queries
      * @param int $id_issuer
      * @param int $id_target
      * @param int $status
+     * @param callable $function
      */
     public function checkRelationState(int $id_issuer, int $id_target, int $status, callable $function): void
     {
@@ -221,6 +246,10 @@ class Queries
         });
     }
 
+    /**
+     * @param int $id_issuer
+     * @param callable $function
+     */
     public function getFriends(int $id_issuer, callable $function): void
     {
         Loader::getDataProvider()->executeSelect(self::GET_FRIEND_LIST, [
@@ -230,6 +259,10 @@ class Queries
         });
     }
 
+    /**
+     * @param int $id_issuer
+     * @param callable $function
+     */
     public function getFriendRequests(int $id_issuer, callable $function): void
     {
         Loader::getDataProvider()->executeSelect(self::SHOW_FRIEND_REQUESTS, [
@@ -239,6 +272,10 @@ class Queries
         });
     }
 
+    /**
+     * @param int $id_issuer
+     * @param callable $function
+     */
     public function getBlocks(int $id_issuer, callable $function): void
     {
         Loader::getDataProvider()->executeSelect(self::GET_BLOCKED_LIST, [
