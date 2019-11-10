@@ -4,6 +4,8 @@ main: xenialdan\UserManager\Loader
 version: 0.0.0
 api: [3.9]
 load: POSTWORLD
+softdepend:
+  - DEVirion
 authors:
   - XenialDan
 description: User management made easy

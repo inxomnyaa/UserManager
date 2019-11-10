@@ -1,12 +1,24 @@
--- #! mysql
+-- #! sqlite
 -- #{usermanager
 -- #  {init
 -- #    {users
 CREATE TABLE IF NOT EXISTS `users` (
-	`user_id`	INTEGER PRIMARY KEY AUTOINCREMENT,
-	`username`	TEXT UNIQUE,
-	`lastuuid`	TEXT,
-	`lastip`	TEXT
+`user_id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+`username`	TEXT UNIQUE,
+`lastuuid`	TEXT,
+`lastip`	TEXT
+);
+-- #    }
+-- #    {user_settings
+CREATE TABLE IF NOT EXISTS `user_settings` (
+`user_id` INTEGER NOT NULL UNIQUE,
+`u_language` TEXT DEFAULT 'eng',
+`u_nickname` TEXT,
+`u_profile_message` TEXT,
+`t_allow_user_find` INTEGER DEFAULT 1,
+`t_allow_friend_request` INTEGER DEFAULT 1,
+`t_allow_message` INTEGER DEFAULT 1,
+`t_allow_online_status` INTEGER DEFAULT 1
 );
 -- #    }
 -- #    {authcode
@@ -29,10 +41,13 @@ PRIMARY KEY(`user_id`)
 -- #    }
 -- #    {messages
 CREATE TABLE IF NOT EXISTS `messages` (
-`sender_id` INTEGER,
-`receiver_id` INTEGER,
-`status` INTEGER,
-`action_user_id` INTEGER
+`user_one_id` INTEGER,
+`user_two_id` INTEGER,
+`status` INTEGER NOT NULL DEFAULT 0,
+`message` TEXT NOT NULL,
+`sender_id` INTEGER NOT NULL,
+`created` INTEGER NOT NULL,
+`edited` INTEGER
 );
 -- #    }
 -- #    {relationship
@@ -190,6 +205,74 @@ SELECT * FROM `relationship` WHERE (`user_one_id` = :user_one_id OR `user_two_id
 -- #        :user_one_id int
 SELECT * FROM `relationship` WHERE (`user_one_id` = :user_one_id OR `user_two_id` = :user_one_id) AND `status` = 0 AND `action_user_id` != :user_one_id;
 -- #      }
+-- #    }
+-- #  }
+-- #  {messages
+-- #    {send
+-- #      :user_one_id int
+-- #      :user_two_id int
+-- #      :message string
+-- #      :sender_id int
+-- #      :created int
+INSERT INTO `messages` (`user_one_id`,`user_two_id`,`message`,`sender_id`,`created`) VALUES (:user_one_id,:user_two_id,:message,:sender_id,:created);
+-- #    }
+-- #    {status
+-- #      {message
+-- #        :status int
+-- #        :id int
+UPDATE `messages` SET `status` = :status WHERE `id` = :id;
+-- #      }
+-- #      {sender
+-- #        :user_one_id int
+-- #        :status int
+-- #        :sender_id int
+UPDATE `messages` SET `status` = :status WHERE (`user_one_id` = :user_one_id) AND `sender_id` = :sender_id;
+-- #      }
+-- #      {receiver
+-- #        :user_one_id int
+-- #        :status int
+-- #        :sender_id int
+UPDATE `messages` SET `status` = :status WHERE (`user_one_id` = :user_one_id) AND NOT `sender_id` = :sender_id;
+-- #      }
+-- #    }
+-- #    {edit
+-- #      :message string
+-- #      :id int
+UPDATE `messages` SET `message` = :message,`status` = 1 WHERE `id` = :id;
+-- #    }
+-- #    {delete
+-- #      {message
+-- #        :id int
+-- #        :edited int
+UPDATE `messages` SET `status` = 2,`edited` = :edited WHERE `id` = :id;
+-- #      }
+-- #      {sender
+-- #        :user_one_id int
+-- #        :sender_id int
+-- #        :edited int
+UPDATE `messages` SET `status` = 2,`edited` = :edited WHERE (`user_one_id` = :user_one_id) AND `sender_id` = :sender_id;
+-- #      }
+-- #    }
+-- #  }
+-- #  {user_settings
+-- #    {create
+-- #      :user_id int
+INSERT INTO `user_settings` (`user_id`,`u_nickname`,`u_profile_message`) VALUES (:user_id,NULL,NULL);
+-- #    }
+-- #    {get
+-- #      :user_id int
+SELECT (`u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_allow_friend_request`,`t_allow_message`,`t_allow_online_status`) FROM `user_settings` WHERE `user_id` = :user_id
+-- #    }
+-- #    {set
+-- #      :u_language string
+-- #      :u_nickname string
+-- #      :u_profile_message string
+-- #      :t_allow_user_find bool
+-- #      :t_allow_friend_request bool
+-- #      :t_allow_message bool
+-- #      :t_allow_online_status bool
+-- #      :user_id int
+INSERT OR REPLACE INTO `user_settings` (`u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_allow_friend_request`,`t_allow_message`,`t_allow_online_status`) VALUES (:u_language,:u_nickname,:u_profile_message,:t_allow_user_find,:t_allow_friend_request,:t_allow_message,:t_allow_online_status) WHERE `user_id` = :user_id
 -- #    }
 -- #  }
 -- #}

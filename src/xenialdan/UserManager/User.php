@@ -129,7 +129,7 @@ class User
      * @param int $userId
      * @return User[]
      */
-    public function getFriendsFromRelationship(array $rows = [], int $userId): array
+    public function getUsersFromRelationship(array $rows = [], int $userId): array
     {
         $friends = [];
         foreach ($rows as $userData) {

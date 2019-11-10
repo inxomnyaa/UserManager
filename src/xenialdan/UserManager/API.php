@@ -21,9 +21,9 @@ class API
     public const FRIEND_DECLINED = 2;
     public const FRIEND_BLOCKED = 3;
 
-    public const STATE_ONLINE = 1;
-    public const STATE_OFFLINE = 2;
-    public const STATE_UNKNOWN = 3;
+    public const STATE_MESSAGE_UNREAD = 0;
+    public const STATE_MESSAGE_EDITED = 1;
+    public const STATE_MESSAGE_DELETED = 2;
 
     /**
      * TODO
@@ -391,7 +391,7 @@ class API
         }
         Loader::$queries->getFriends($user->getId(), function (array $rows) use ($user, $player, $previousForm): void {
             $form = new SimpleForm("Friend Manager - List");
-            foreach ($user->getFriendsFromRelationship($rows, $user->getId()) as $friend) {
+            foreach ($user->getUsersFromRelationship($rows, $user->getId()) as $friend) {
                 $form->addButton(new Button(($friend->isOnline() ? TextFormat::DARK_GREEN : TextFormat::DARK_RED) . $friend->getRealUsername()));//TODO image
             }
             $form->addButton(new Button("Back"));
@@ -416,9 +416,9 @@ class API
             $player->sendMessage("DEBUG: null");
             return;
         }
-        Loader::$queries->getBlocks($user->getId(), function (array $rows) use ($user, $player, $previousForm): void {
+        Loader::$queries->getBlocked($user->getId(), function (array $rows) use ($user, $player, $previousForm): void {
             $form = new SimpleForm("Friend Manager - Blocked users");
-            foreach ($user->getFriendsFromRelationship($rows, $user->getId()) as $friend) {
+            foreach ($user->getUsersFromRelationship($rows, $user->getId()) as $friend) {
                 $form->addButton(new Button(TextFormat::DARK_RED . $friend->getRealUsername()));//TODO image
             }
             $form->addButton(new Button("Back"));
@@ -445,7 +445,7 @@ class API
         }
         Loader::$queries->getFriendRequests($user->getId(), function (array $rows) use ($user, $player, $previousForm): void {
             $form = new SimpleForm("Friend Manager - Requests");
-            foreach ($user->getFriendsFromRelationship($rows, $user->getId()) as $friend) {
+            foreach ($user->getUsersFromRelationship($rows, $user->getId()) as $friend) {
                 $form->addButton(new Button(($friend->isOnline() ? TextFormat::DARK_GREEN : TextFormat::DARK_RED) . $friend->getRealUsername()));//TODO image
             }
             $form->addButton(new Button("Back"));
@@ -529,7 +529,7 @@ class API
             }
             //Friend messages
             Loader::$queries->getFriends($user->getId(), function (array $rows) use ($player, $user): void {
-                $friends = $user->getFriendsFromRelationship($rows, $user->getId());
+                $friends = $user->getUsersFromRelationship($rows, $user->getId());
                 $onlineFriends = array_filter($friends, function (User $friend): bool {
                     return $friend->isOnline();
                 });
@@ -539,7 +539,7 @@ class API
                 }, $onlineFriends)));
             });
             Loader::$queries->getFriendRequests($user->getId(), function (array $rows) use ($player, $user): void {
-                $friends = $user->getFriendsFromRelationship($rows, $user->getId());
+                $friends = $user->getUsersFromRelationship($rows, $user->getId());
                 $player->sendMessage("You got " . count($friends) . " open friend requests");
                 $player->sendMessage(implode(", ", array_map(function (User $friend) {
                     return $friend->getDisplayName();

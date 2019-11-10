@@ -15,6 +15,7 @@ class Queries
     const INIT_TABLES_AUTHCODE = "usermanager.init.authcode";
     const INIT_TABLES_RELATIONSHIP = "usermanager.init.relationship";
     const INIT_TABLES_MESSAGES = "usermanager.init.messages";
+    const INIT_TABLES_USER_SETTINGS = "usermanager.init.user_settings";
     //ban TODO
     const GET_BAN = "usermanager.ban.get";
     const ADD_BAN = "usermanager.ban.add";
@@ -25,6 +26,7 @@ class Queries
     const ADD_WARN = "usermanager.warn.add";
     const UPDATE_WARN = "usermanager.warn.update";
     const DELETE_WARN = "usermanager.warn.delete";
+    //report TODO
     //user get
     const GET_USER_ID_BY_NAME = "usermanager.user.get.idbyname";
     const GET_USER_DATA_BY_ID = "usermanager.user.data.get.byid";
@@ -44,6 +46,19 @@ class Queries
     const GET_FRIEND_LIST = "usermanager.relationship.friend.list";
     const GET_BLOCKED_LIST = "usermanager.relationship.blocked.list";
     const SHOW_FRIEND_REQUESTS = "usermanager.relationship.friend.pending";
+    //messages
+    const SEND_MESSAGE = "usermanager.messages.send";
+    const SET_MESSAGE_STATUS = "usermanager.messages.status.message";
+    const SET_MESSAGE_STATUS_SENT = "usermanager.messages.status.sender";
+    const SET_MESSAGE_STATUS_RECEIVED = "usermanager.messages.status.receiver";
+    const EDIT_MESSAGE = "usermanager.messages.edit";
+    const DELETE_MESSAGE = "usermanager.messages.delete.message";
+    const DELETE_MESSAGE_SENDER = "usermanager.messages.delete.sender";
+    //user settings
+    const CREATE_USER_SETTINGS = "usermanager.user_settings.create";
+    const GET_USER_SETTINGS = "usermanager.user_settings.get";
+    const SET_USER_SETTINGS = "usermanager.user_settings.set";
+    //TODO exp, coins
 
     /**
      * Queries constructor.
@@ -56,7 +71,10 @@ class Queries
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_AUTHCODE);
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_RELATIONSHIP);
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_MESSAGES);
+        Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_USER_SETTINGS);
     }
+
+    /* GENERIC */
 
     /**
      * @param callable $function
@@ -173,6 +191,7 @@ class Queries
     }
 
     /* SOCIAL */
+
     /**
      * @param int $id_issuer
      * @param int $id_target
@@ -276,10 +295,188 @@ class Queries
      * @param int $id_issuer
      * @param callable $function
      */
-    public function getBlocks(int $id_issuer, callable $function): void
+    public function getBlocked(int $id_issuer, callable $function): void
     {
         Loader::getDataProvider()->executeSelect(self::GET_BLOCKED_LIST, [
             "user_one_id" => $id_issuer,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /* MESSAGES */
+
+    /**
+     * @param int $id_issuer
+     * @param int $id_target
+     * @param string $message
+     * @param callable $function
+     */
+    public function sendMessage(int $id_issuer, int $id_target, string $message, callable $function): void
+    {
+        $user1 = $id_issuer < $id_target ? $id_issuer : $id_target;
+        $user2 = $id_issuer < $id_target ? $id_target : $id_issuer;
+        Loader::getDataProvider()->executeInsert(self::SEND_MESSAGE, [
+            "user_one_id" => $user1,
+            "user_two_id" => $user2,
+            "message" => $message,
+            "sender_id" => $id_issuer,
+            "created" => time(),
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $message_id
+     * @param int $status
+     * @param callable $function
+     */
+    public function setMessageStatus(int $message_id, int $status, callable $function): void
+    {
+        Loader::getDataProvider()->executeChange(self::SET_MESSAGE_STATUS, [
+            "status" => $status,
+            "id" => $message_id,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $id_issuer
+     * @param int $id_target
+     * @param int $status
+     * @param callable $function
+     */
+    public function setSenderMessageStatus(int $id_issuer, int $id_target, int $status, callable $function): void
+    {
+        $user1 = $id_issuer < $id_target ? $id_issuer : $id_target;
+        Loader::getDataProvider()->executeChange(self::SET_MESSAGE_STATUS_SENT, [
+            "status" => $status,
+            "user_one_id" => $user1,
+            "sender_id" => $id_issuer,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $id_issuer
+     * @param int $id_target
+     * @param int $status
+     * @param callable $function
+     */
+    public function setReceiverMessageStatus(int $id_issuer, int $id_target, int $status, callable $function): void
+    {
+        $user1 = $id_issuer < $id_target ? $id_issuer : $id_target;
+        Loader::getDataProvider()->executeChange(self::SET_MESSAGE_STATUS_RECEIVED, [
+            "status" => $status,
+            "user_one_id" => $user1,
+            "sender_id" => $id_issuer,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $message_id
+     * @param string $message
+     * @param callable $function
+     */
+    public function editMessage(int $message_id, string $message, callable $function): void
+    {
+        Loader::getDataProvider()->executeChange(self::EDIT_MESSAGE, [
+            "id" => $message_id,
+            "message" => $message,
+            "edited" => time(),
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $message_id
+     * @param callable $function
+     */
+    public function deleteMessage(int $message_id, callable $function): void
+    {
+        Loader::getDataProvider()->executeChange(self::DELETE_MESSAGE, [
+            "id" => $message_id,
+            "edited" => time(),
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $id_issuer
+     * @param int $id_target
+     * @param callable $function
+     */
+    public function deleteSenderMessages(int $id_issuer, int $id_target, callable $function): void
+    {
+        $user1 = $id_issuer < $id_target ? $id_issuer : $id_target;
+        Loader::getDataProvider()->executeChange(self::EDIT_MESSAGE, [
+            "user_one_id" => $user1,
+            "sender_id" => $id_issuer,
+            "edited" => time(),
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /* USER SETTINGS */
+
+    /**
+     * @param int $user_id
+     * @param callable $function
+     */
+    public function createUserSettings(int $user_id, callable $function): void
+    {
+        Loader::getDataProvider()->executeInsert(self::CREATE_USER_SETTINGS, [
+            "user_id" => $user_id
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $user_id
+     * @param callable $function
+     */
+    public function getUserSettings(int $user_id, callable $function): void
+    {
+        Loader::getDataProvider()->executeSelect(self::GET_USER_SETTINGS, [
+            "user_id" => $user_id
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $user_id
+     * @param string $u_language
+     * @param string $u_nickname
+     * @param string $u_profile_message
+     * @param bool $t_allow_user_find
+     * @param bool $t_allow_friend_request
+     * @param bool $t_allow_message
+     * @param bool $t_allow_online_status
+     * @param callable $function
+     */
+    public function changeUserSettings(int $user_id, string $u_language, string $u_nickname, string $u_profile_message,
+                                       bool $t_allow_user_find, bool $t_allow_friend_request, bool $t_allow_message,
+                                       bool $t_allow_online_status, callable $function): void
+    {
+        Loader::getDataProvider()->executeChange(self::SET_USER_SETTINGS, [
+            "user_id" => $user_id,
+            "u_language" => $u_language,
+            "u_nickname" => $u_nickname,
+            "u_profile_message" => $u_profile_message,
+            "t_allow_user_find" => $t_allow_user_find,
+            "t_allow_friend_request" => $t_allow_friend_request,
+            "t_allow_message" => $t_allow_message,
+            "t_allow_online_status" => $t_allow_online_status
         ], $function, function (SqlError $error) {
             var_dump($error);
         });

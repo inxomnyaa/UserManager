@@ -16,9 +16,9 @@ class BaseEventListener implements Listener
      * TODO handle ban
      * @param PlayerPreLoginEvent $event
      */
-    public function onPreLogin(PlayerPreLoginEvent $event)
+    public function onConnect(PlayerPreLoginEvent $event)
     {
-        if (!Loader::$userstore::getUser($event->getPlayer()) instanceof User) {
+        if (!($user = Loader::$userstore::getUser($event->getPlayer())) instanceof User) {
             Loader::$queries->getUser(($player = $event->getPlayer())->getLowerCaseName(), function (array $rows) use ($player): void {
                 if (empty($rows)) {
                     Loader::$userstore::createNewUser($player->getLowerCaseName(), $player->getAddress(), []);

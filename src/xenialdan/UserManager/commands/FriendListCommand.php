@@ -46,7 +46,7 @@ class FriendListCommand extends BaseSubCommand
         Loader::$queries->getFriends($user->getId(), function (array $rows) use ($user, $sender): void {
             $names = array_map(function (User $user): string {
                 return $user->getUsername();
-            }, $user->getFriendsFromRelationship($rows, $user->getId()));
+            }, $user->getUsersFromRelationship($rows, $user->getId()));
             if (count($names) > 0) {
                 $sender->sendMessage("Friends (" . count($names) . "):");
                 $sender->sendMessage(implode(", ", $names));
