@@ -5,6 +5,8 @@ namespace xenialdan\UserManager\listener;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
+use ReflectionException;
+use RuntimeException;
 use xenialdan\UserManager\event\UserLoginEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
@@ -29,6 +31,11 @@ class BaseEventListener implements Listener
         }
     }
 
+    /**
+     * @param PlayerJoinEvent $event
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
     public function onJoin(PlayerJoinEvent $event): void
     {
         var_dump(__METHOD__);

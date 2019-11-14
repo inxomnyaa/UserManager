@@ -62,8 +62,6 @@ class SettingsListener implements Listener
 
     private function onSettingsRequest(DataPacketReceiveEvent $event): bool
     {
-        /** @var ServerSettingsRequestPacket $pk */
-        $pk = $event->getPacket();
         $player = $event->getPlayer();
         if (($user = UserStore::getUser($player)) instanceof User) {
             //TODO debug

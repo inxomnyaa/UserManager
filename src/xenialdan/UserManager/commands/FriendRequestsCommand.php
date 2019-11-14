@@ -7,6 +7,7 @@ namespace xenialdan\UserManager\commands;
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\BooleanArgument;
 use CortexPE\Commando\BaseSubCommand;
+use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
@@ -18,6 +19,7 @@ class FriendRequestsCommand extends BaseSubCommand
 
     /**
      * This is where all the arguments, permissions, sub-commands, etc would be registered
+     * @throws ArgumentOrderException
      */
     protected function prepare(): void
     {
@@ -29,7 +31,6 @@ class FriendRequestsCommand extends BaseSubCommand
      * @param CommandSender $sender
      * @param string $aliasUsed
      * @param BaseArgument[] $args
-     * @throws \InvalidArgumentException
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {

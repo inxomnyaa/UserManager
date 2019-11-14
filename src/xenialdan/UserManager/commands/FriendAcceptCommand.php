@@ -7,6 +7,8 @@ namespace xenialdan\UserManager\commands;
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseSubCommand;
+use CortexPE\Commando\exception\ArgumentOrderException;
+use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use xenialdan\UserManager\API;
 use xenialdan\UserManager\Loader;
@@ -17,6 +19,7 @@ class FriendAcceptCommand extends BaseSubCommand
 
     /**
      * This is where all the arguments, permissions, sub-commands, etc would be registered
+     * @throws ArgumentOrderException
      */
     protected function prepare(): void
     {
@@ -28,7 +31,7 @@ class FriendAcceptCommand extends BaseSubCommand
      * @param CommandSender $sender
      * @param string $aliasUsed
      * @param BaseArgument[] $args
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {

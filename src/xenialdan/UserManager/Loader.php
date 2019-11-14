@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace xenialdan\UserManager;
 
+use InvalidStateException;
+use pocketmine\lang\BaseLang;
 use pocketmine\plugin\PluginBase;
+use pocketmine\plugin\PluginException;
 use poggit\libasynql\DataConnector;
 use poggit\libasynql\libasynql;
+use poggit\libasynql\SqlError;
 use xenialdan\UserManager\commands\BlockCommand;
 use xenialdan\UserManager\commands\FriendCommand;
 use xenialdan\UserManager\commands\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
+use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\listener\BaseEventListener;
 use xenialdan\UserManager\listener\ChatEventListener;
 use xenialdan\UserManager\listener\SettingsListener;
+use xenialdan\UserManager\models\Translations;
 
 class Loader extends PluginBase
 {
@@ -25,6 +31,8 @@ class Loader extends PluginBase
     public static $queries;
     /** @var UserStore */
     public static $userstore;
+    /** @var string 3 letter */
+    protected static $pluginLang = BaseLang::FALLBACK_LANGUAGE;
 
     /**
      * Returns an instance of the plugin
@@ -52,6 +60,12 @@ class Loader extends PluginBase
         ]);
     }
 
+    /**
+     * @throws LanguageException
+     * @throws InvalidStateException
+     * @throws PluginException
+     * @throws SqlError
+     */
     public function onEnable()
     {
         $this->saveDefaultConfig();
@@ -67,12 +81,59 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new BaseEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new ChatEventListener(), $this);
-        //TODO add chat listener
-        #$this->database->executeGeneric(Queries::INITIALIZE_TABLES_PLAYER);
+        //translations
+        Translations::init();
+        $lang = (string)$this->getConfig()->get("language", BaseLang::FALLBACK_LANGUAGE);
+        try {
+            if (strlen($lang) !== 3) {
+                throw new LanguageException("Selected plugin language {$lang} is invalid, the string must be 3 letters long.");
+            }
+            try {
+                Translations::getLanguage($lang);
+            } catch (LanguageException $e) {
+                throw new LanguageException("Selected plugin language {$lang} is invalid: " . $e->getMessage());
+            }
+        } catch (LanguageException $exception) {
+            $lang = BaseLang::FALLBACK_LANGUAGE;
+            $this->getLogger()->warning($exception->getMessage());
+            $this->getLogger()->warning("Resetting to default ($lang)");
+            $this->getConfig()->set("language", $lang);
+            $this->getConfig()->save();
+        } finally {
+            self::$pluginLang = $lang;
+            $this->getLogger()->debug("Plugin language set to ".Translations::getLanguage()->getName());
+        }
     }
 
     public function onDisable()
     {
         if (isset($this->database)) $this->database->close();
+    }
+
+    /**
+     * @return string 3 letter
+     */
+    public function getPluginLanguage(): string
+    {
+        return self::$pluginLang;
+    }
+
+    /**
+     * Returns the path to the language files folder.
+     *
+     * @return string
+     */
+    public function getLanguageFolder(): string
+    {
+        return $this->getFile() . "resources" . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * Get a list of available languages
+     * @return array
+     */
+    public function getLanguageList(): array
+    {
+        return BaseLang::getLanguageList($this->getLanguageFolder());
     }
 }

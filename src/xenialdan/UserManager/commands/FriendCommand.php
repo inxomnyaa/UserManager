@@ -6,6 +6,8 @@ namespace xenialdan\UserManager\commands;
 
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\BaseCommand;
+use CortexPE\Commando\exception\SubCommandCollision;
+use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
@@ -15,6 +17,7 @@ class FriendCommand extends BaseCommand
 
     /**
      * This is where all the arguments, permissions, sub-commands, etc would be registered
+     * @throws SubCommandCollision
      */
     protected function prepare(): void
     {
@@ -31,6 +34,7 @@ class FriendCommand extends BaseCommand
      * @param CommandSender $sender
      * @param string $aliasUsed
      * @param BaseArgument[] $args
+     * @throws InvalidArgumentException
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {

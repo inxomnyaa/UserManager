@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace xenialdan\UserManager;
 
+use InvalidArgumentException;
 use pocketmine\form\Form;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
@@ -30,7 +31,7 @@ class API
      * @param Player $player
      * @param null|User $user
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openUserUI(Player $player, ?User $user, ?Form $previousForm = null): void
     {
@@ -59,7 +60,7 @@ class API
      * @param Player $player
      * @param null|User $user
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openRequestUserUI(Player $player, ?User $user, ?Form $previousForm = null): void
     {
@@ -108,7 +109,7 @@ class API
      * @param Player $player
      * @param null|User $user
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openManageUI(Player $player, ?User $user, ?Form $previousForm = null): void
     {
@@ -161,7 +162,7 @@ class API
      * TODO
      * @param Player $player
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openFriendsUI(Player $player, ?Form $previousForm = null): void
     {
@@ -219,6 +220,7 @@ class API
     /**
      * TODO
      * @param Player $player
+     * @throws InvalidArgumentException
      */
     public static function openFriendAddUI(Player $player): void
     {
@@ -244,6 +246,7 @@ class API
     /**
      * TODO
      * @param Player $player
+     * @throws InvalidArgumentException
      */
     public static function openUserSearchUI(Player $player): void
     {
@@ -264,7 +267,7 @@ class API
      * @param Player $player
      * @param User $friend
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openFriendConfirmUI(Player $player, User $friend, ?Form $previousForm = null): void
     {
@@ -289,7 +292,7 @@ class API
      * @param Player $player
      * @param User $friend
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openFriendRemoveConfirmUI(Player $player, User $friend, ?Form $previousForm = null): void
     {
@@ -314,7 +317,7 @@ class API
      * @param Player $player
      * @param User $friend
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openBlockUserUI(Player $player, User $friend, ?Form $previousForm = null): void
     {
@@ -339,7 +342,7 @@ class API
      * @param Player $player
      * @param User $friend
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openUnblockUserUI(Player $player, User $friend, ?Form $previousForm = null): void
     {
@@ -364,7 +367,7 @@ class API
      * @param Player $player
      * @param string $name
      * @param Form|null $previousForm
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function openUserNotFoundUI(Player $player, string $name, ?Form $previousForm = null): void
     {

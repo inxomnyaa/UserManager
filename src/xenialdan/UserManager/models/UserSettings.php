@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace xenialdan\UserManager\models;
 
-class UserSettings implements \JsonSerializable
+use JsonSerializable;
+use ReflectionClass;
+use ReflectionProperty;
+
+class UserSettings implements JsonSerializable
 {
     const PREFIX_STRING = "u";
     const PREFIX_BOOL = "t";
@@ -27,9 +31,9 @@ class UserSettings implements \JsonSerializable
     public function __construct(array $data = [])
     {
         if (empty($data)) return;
-        /** @var \ReflectionClass $reflectionClass */
-        $reflectionClass = new \ReflectionClass(UserSettings::class);
-        foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as $key => $property) {
+        /** @var ReflectionClass $reflectionClass */
+        $reflectionClass = new ReflectionClass(UserSettings::class);
+        foreach ($reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $key => $property) {
             $this->{$property->getName()} = $data[$key] ?? $data[$property->getName()];
         }
     }
@@ -54,14 +58,5 @@ class UserSettings implements \JsonSerializable
     public function jsonSerialize()
     {
         return (array)$this;
-        return [
-            "u_language" => $this->u_language,
-            "u_nickname" => $this->u_nickname,
-            "u_profile_message" => $this->u_profile_message,
-            "t_allow_user_find" => $this->t_allow_user_find,
-            "t_allow_friend_request" => $this->t_allow_friend_request,
-            "t_allow_message" => $this->t_allow_message,
-            "t_allow_online_status" => $this->t_allow_online_status,
-        ];
     }
 }

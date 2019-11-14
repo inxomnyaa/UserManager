@@ -7,6 +7,8 @@ namespace xenialdan\UserManager\commands;
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseCommand;
+use CortexPE\Commando\exception\ArgumentOrderException;
+use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
@@ -18,6 +20,7 @@ class UnblockCommand extends BaseCommand
 
     /**
      * This is where all the arguments, permissions, sub-commands, etc would be registered
+     * @throws ArgumentOrderException
      */
     protected function prepare(): void
     {
@@ -29,7 +32,7 @@ class UnblockCommand extends BaseCommand
      * @param CommandSender $sender
      * @param string $aliasUsed
      * @param BaseArgument[] $args
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
