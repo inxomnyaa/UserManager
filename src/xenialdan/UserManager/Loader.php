@@ -12,6 +12,8 @@ use xenialdan\UserManager\commands\FriendCommand;
 use xenialdan\UserManager\commands\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
 use xenialdan\UserManager\listener\BaseEventListener;
+use xenialdan\UserManager\listener\ChatEventListener;
+use xenialdan\UserManager\listener\SettingsListener;
 
 class Loader extends PluginBase
 {
@@ -63,6 +65,9 @@ class Loader extends PluginBase
         self::$userstore = new UserStore();
         //events
         $this->getServer()->getPluginManager()->registerEvents(new BaseEventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new ChatEventListener(), $this);
+        //TODO add chat listener
         #$this->database->executeGeneric(Queries::INITIALIZE_TABLES_PLAYER);
     }
 

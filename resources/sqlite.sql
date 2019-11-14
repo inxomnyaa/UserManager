@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `user_settings` (
 `user_id` INTEGER NOT NULL UNIQUE,
 `u_language` TEXT DEFAULT 'eng',
-`u_nickname` TEXT,
-`u_profile_message` TEXT,
+`u_nickname` TEXT DEFAULT '',
+`u_profile_message` TEXT DEFAULT '',
 `t_allow_user_find` INTEGER DEFAULT 1,
 `t_allow_friend_request` INTEGER DEFAULT 1,
 `t_allow_message` INTEGER DEFAULT 1,
@@ -257,11 +257,11 @@ UPDATE `messages` SET `status` = 2,`edited` = :edited WHERE (`user_one_id` = :us
 -- #  {user_settings
 -- #    {create
 -- #      :user_id int
-INSERT INTO `user_settings` (`user_id`,`u_nickname`,`u_profile_message`) VALUES (:user_id,NULL,NULL);
+INSERT INTO `user_settings` (`user_id`) VALUES (:user_id);
 -- #    }
 -- #    {get
 -- #      :user_id int
-SELECT (`u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_allow_friend_request`,`t_allow_message`,`t_allow_online_status`) FROM `user_settings` WHERE `user_id` = :user_id
+SELECT `u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_allow_friend_request`,`t_allow_message`,`t_allow_online_status` FROM `user_settings` WHERE `user_id` = :user_id;
 -- #    }
 -- #    {set
 -- #      :u_language string
@@ -272,7 +272,7 @@ SELECT (`u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_all
 -- #      :t_allow_message bool
 -- #      :t_allow_online_status bool
 -- #      :user_id int
-INSERT OR REPLACE INTO `user_settings` (`u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_allow_friend_request`,`t_allow_message`,`t_allow_online_status`) VALUES (:u_language,:u_nickname,:u_profile_message,:t_allow_user_find,:t_allow_friend_request,:t_allow_message,:t_allow_online_status) WHERE `user_id` = :user_id
+UPDATE `user_settings` SET `u_language`=:u_language,`u_nickname`=:u_nickname,`u_profile_message`=:u_profile_message,`t_allow_user_find`=:t_allow_user_find,`t_allow_friend_request`=:t_allow_friend_request,`t_allow_message`=:t_allow_message,`t_allow_online_status`=:t_allow_online_status WHERE `user_id` = :user_id;
 -- #    }
 -- #  }
 -- #}

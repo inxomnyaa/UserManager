@@ -5,7 +5,7 @@ namespace xenialdan\UserManager\listener;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
-use xenialdan\UserManager\API;
+use xenialdan\UserManager\event\UserLoginEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
 
@@ -31,6 +31,11 @@ class BaseEventListener implements Listener
 
     public function onJoin(PlayerJoinEvent $event): void
     {
-        API::sendJoinMessages($event->getPlayer());
+        var_dump(__METHOD__);
+        if (($user = Loader::$userstore::getUser($event->getPlayer())) instanceof User) {
+            var_dump($user);
+            $ev = new UserLoginEvent($user);
+            $ev->call();
+        }
     }
 }

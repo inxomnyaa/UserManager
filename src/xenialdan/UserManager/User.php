@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace xenialdan\UserManager;
 
 use pocketmine\Player;
+use xenialdan\UserManager\models\UserSettings;
 
 class User
 {
 
     private $id, $username, $ip, $flags = [];
     private $banned = false;
+    /** @var null|UserSettings */
+    private $settings = null;
 
     public function __construct($id = -1, string $username, string $ip, array/*PermissionFlags*/
     $flags = [])
@@ -19,6 +22,7 @@ class User
         $this->username = $username;
         $this->ip = $ip;
         $this->flags = $flags;
+        $this->settings = new UserSettings();
     }
 
     /**
@@ -140,6 +144,25 @@ class User
             }
         }
         return $friends;
+    }
+
+    /**
+     * @return null|UserSettings
+     */
+    public function getSettings(): ?UserSettings
+    {
+        return $this->settings;
+    }
+
+    /**
+     * @param UserSettings $settings
+     */
+    public function setSettings(UserSettings $settings): void
+    {
+        $this->settings = $settings;
+        Loader::$queries->changeUserSettings($this->getId(), $settings, function (int $affectedRows): void {
+            var_dump(__METHOD__, "Changed $affectedRows rows");
+        });
     }
 
     public function __toString(): string

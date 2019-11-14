@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace xenialdan\UserManager;
 
 use poggit\libasynql\SqlError;
+use xenialdan\UserManager\models\UserSettings;
 
 class Queries
 {
@@ -449,34 +450,26 @@ class Queries
         Loader::getDataProvider()->executeSelect(self::GET_USER_SETTINGS, [
             "user_id" => $user_id
         ], $function, function (SqlError $error) {
-            var_dump($error);
+            var_dump($error);//TODO not needed
         });
     }
 
     /**
      * @param int $user_id
-     * @param string $u_language
-     * @param string $u_nickname
-     * @param string $u_profile_message
-     * @param bool $t_allow_user_find
-     * @param bool $t_allow_friend_request
-     * @param bool $t_allow_message
-     * @param bool $t_allow_online_status
+     * @param UserSettings $settings
      * @param callable $function
      */
-    public function changeUserSettings(int $user_id, string $u_language, string $u_nickname, string $u_profile_message,
-                                       bool $t_allow_user_find, bool $t_allow_friend_request, bool $t_allow_message,
-                                       bool $t_allow_online_status, callable $function): void
+    public function changeUserSettings(int $user_id, UserSettings $settings, callable $function): void
     {
         Loader::getDataProvider()->executeChange(self::SET_USER_SETTINGS, [
             "user_id" => $user_id,
-            "u_language" => $u_language,
-            "u_nickname" => $u_nickname,
-            "u_profile_message" => $u_profile_message,
-            "t_allow_user_find" => $t_allow_user_find,
-            "t_allow_friend_request" => $t_allow_friend_request,
-            "t_allow_message" => $t_allow_message,
-            "t_allow_online_status" => $t_allow_online_status
+            "u_language" => $settings->u_language,
+            "u_nickname" => $settings->u_nickname,
+            "u_profile_message" => $settings->u_profile_message,
+            "t_allow_user_find" => $settings->t_allow_user_find,
+            "t_allow_friend_request" => $settings->t_allow_friend_request,
+            "t_allow_message" => $settings->t_allow_message,
+            "t_allow_online_status" => $settings->t_allow_online_status
         ], $function, function (SqlError $error) {
             var_dump($error);
         });
