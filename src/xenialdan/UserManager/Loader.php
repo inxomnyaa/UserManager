@@ -102,6 +102,7 @@ class Loader extends PluginBase
         } finally {
             self::$pluginLang = $lang;
             $this->getLogger()->debug("Plugin language set to ".Translations::getLanguage()->getName());
+            Translations::languageNeedsUpdate($lang);
         }
     }
 

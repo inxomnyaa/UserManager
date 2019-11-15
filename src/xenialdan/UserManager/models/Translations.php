@@ -6,6 +6,7 @@ namespace xenialdan\UserManager\models;
 
 use pocketmine\lang\BaseLang;
 use pocketmine\lang\TranslationContainer;
+use ReflectionProperty;
 use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
@@ -19,12 +20,22 @@ class Translations
     public static function init(): void
     {
         foreach (Loader::getInstance()->getLanguageList() as $k => $item) {
-            self::registerLanguage(new BaseLang($k, Loader::getInstance()->getLanguageFolder()));
+            try {
+                self::registerLanguage(new BaseLang($k, Loader::getInstance()->getLanguageFolder(), Loader::getInstance()->getPluginLanguage()));
+            } catch (LanguageException $e) {
+                Loader::getInstance()->getLogger()->logException($e);
+                continue;
+            }
         }
     }
 
+    /**
+     * @param BaseLang $baseLang
+     * @throws LanguageException
+     */
     public static function registerLanguage(BaseLang $baseLang): void
     {
+        if (isset(self::$languages[$baseLang->getLang()])) throw new LanguageException("Language " . $baseLang->getLang() . " is already registered");
         self::$languages[$baseLang->getLang()] = $baseLang;
         Loader::getInstance()->getLogger()->debug("Loaded language {$baseLang->getName()}");
     }
@@ -40,6 +51,33 @@ class Translations
         $lang = self::$languages[strtolower($shortName ?? Loader::getInstance()->getPluginLanguage())] ?? null;
         if ($lang instanceof BaseLang) return $lang;
         throw new LanguageException("Language $shortName not found");
+    }
+
+    /**
+     * Checks against the english translation and dumps missing translation keys
+     * @param string|null $shortName 3 letter format conform with iso639-2
+     * @return bool Returns true when there are missing entries
+     */
+    public static function languageNeedsUpdate(string $shortName): bool
+    {
+        try {
+            $shortName = strtolower($shortName);
+            if ($shortName === strtolower(BaseLang::FALLBACK_LANGUAGE)) return false;
+            $class = new BaseLang($shortName, Loader::getInstance()->getLanguageFolder());
+            $fallback = new ReflectionProperty($class, "fallbackLang");
+            $lang = new ReflectionProperty($class, "lang");
+            $fallback->setAccessible(true);
+            $lang->setAccessible(true);
+            $diff = array_diff_key($fallback->getValue($class), $lang->getValue($class));
+            if (count($diff) > 0) {
+                Loader::getInstance()->getLogger()->notice("Language " . $class->getName() . " (" . $class->getLang() . ".ini) is missing following entries: '" . implode("','", $diff) . "'");
+                if (!empty(Loader::getInstance()->getDescription()->getWebsite())) Loader::getInstance()->getLogger()->notice("If you'd like to complete the translation, feel free to submit changes at " . Loader::getInstance()->getDescription()->getWebsite());
+                return true;
+            }
+        } catch (\Exception $exception) {
+            Loader::getInstance()->getLogger()->logException($exception);
+        }
+        return false;
     }
 
     /**
