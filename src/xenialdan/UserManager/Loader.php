@@ -16,8 +16,8 @@ use xenialdan\UserManager\commands\FriendCommand;
 use xenialdan\UserManager\commands\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
 use xenialdan\UserManager\exceptions\LanguageException;
-use xenialdan\UserManager\listener\BaseEventListener;
-use xenialdan\UserManager\listener\ChatEventListener;
+use xenialdan\UserManager\listener\ChatListener;
+use xenialdan\UserManager\listener\GenericEventListener;
 use xenialdan\UserManager\listener\SettingsListener;
 use xenialdan\UserManager\models\Translations;
 
@@ -78,9 +78,9 @@ class Loader extends PluginBase
         //User store
         self::$userstore = new UserStore();
         //events
-        $this->getServer()->getPluginManager()->registerEvents(new BaseEventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new GenericEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new ChatEventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new ChatListener(), $this);
         //translations
         Translations::init();
         $lang = (string)$this->getConfig()->get("language", BaseLang::FALLBACK_LANGUAGE);

@@ -7,7 +7,7 @@ use pocketmine\event\player\PlayerChatEvent;
 use xenialdan\UserManager\API;
 use xenialdan\UserManager\event\UserLoginEvent;
 
-class ChatEventListener implements Listener
+class ChatListener implements Listener
 {
 
     public function onLogin(UserLoginEvent $event): void

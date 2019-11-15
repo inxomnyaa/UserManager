@@ -11,7 +11,7 @@ use xenialdan\UserManager\event\UserLoginEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
 
-class BaseEventListener implements Listener
+class GenericEventListener implements Listener
 {
 
     /**
