@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace xenialdan\UserManager;
 
 use poggit\libasynql\SqlError;
+use xenialdan\UserManager\models\Ban;
 use xenialdan\UserManager\models\UserSettings;
 
 class Queries
@@ -19,6 +20,7 @@ class Queries
     const INIT_TABLES_USER_SETTINGS = "usermanager.init.user_settings";
     //ban TODO
     const GET_BAN = "usermanager.ban.get";
+    const GET_ALL_BANS = "usermanager.ban.getall";
     const ADD_BAN = "usermanager.ban.add";
     const UPDATE_BAN = "usermanager.ban.update";
     const DELETE_BAN = "usermanager.ban.delete";
@@ -470,6 +472,85 @@ class Queries
             "t_allow_friend_request" => $settings->t_allow_friend_request,
             "t_allow_message" => $settings->t_allow_message,
             "t_allow_online_status" => $settings->t_allow_online_status
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /* BANS */
+
+    /**
+     * @param callable $function
+     */
+    public function getBanList(callable $function): void
+    {
+        Loader::getDataProvider()->executeSelect(self::GET_ALL_BANS, [], $function);
+    }
+
+    /**
+     * @param int $id
+     * @param callable $function
+     */
+    public function getBanByUserId(int $id, callable $function): void
+    {
+        print "getBanByUserId";
+        Loader::getDataProvider()->executeSelect(self::GET_BAN, [
+            "user_id" => $id,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param Ban $ban
+     * @param callable $function
+     */
+    public function addBan(Ban $ban, callable $function): void
+    {
+        print "addBan";
+        print $ban;
+        Loader::getDataProvider()->executeInsert(self::ADD_BAN, [
+            "user_id" => $ban->getUserId(),
+            "since" => $ban->since,
+            "until" => $ban->until,
+            "expires" => $ban->expires,
+            "reason" => $ban->reason,
+            "types" => $ban->types,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param Ban $ban
+     * @param callable $function
+     */
+    public function updateBan(Ban $ban, callable $function): void
+    {
+        print "updateBan";
+        print $ban;
+        Loader::getDataProvider()->executeChange(self::UPDATE_BAN, [
+            "user_id" => $ban->getUserId(),
+            "since" => $ban->since,
+            "until" => $ban->until,
+            "expires" => $ban->expires,
+            "reason" => $ban->reason,
+            "types" => $ban->types,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param Ban $ban
+     * @param callable $function
+     */
+    public function deleteBan(Ban $ban, callable $function): void
+    {
+        print "deleteBan";
+        print $ban;
+        Loader::getDataProvider()->executeChange(self::DELETE_BAN, [
+            "user_id" => $ban->getUserId()
         ], $function, function (SqlError $error) {
             var_dump($error);
         });

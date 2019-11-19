@@ -30,24 +30,25 @@ PRIMARY KEY(`user_id`)
 -- #    }
 -- #    {bans
 CREATE TABLE IF NOT EXISTS `bans` (
-`user_id` INTEGER,
-`since` TEXT,
-`until` TEXT,
-`expires` INTEGER,
-`reason` TEXT,
-`types` TEXT,
-PRIMARY KEY(`user_id`)
+                                      `user_id` INTEGER NOT NULL,
+                                      `since`   INTEGER NOT NULL,
+                                      `until`   INTEGER NOT NULL,
+                                      `expires` INTEGER NOT NULL,
+                                      `reason`  TEXT    NOT NULL DEFAULT '',
+                                      `types`   TEXT    NOT NULL DEFAULT 'n',
+                                      PRIMARY KEY(`user_id`)
 );
 -- #    }
 -- #    {messages
 CREATE TABLE IF NOT EXISTS `messages` (
-`user_one_id` INTEGER,
-`user_two_id` INTEGER,
-`status` INTEGER NOT NULL DEFAULT 0,
-`message` TEXT NOT NULL,
-`sender_id` INTEGER NOT NULL,
-`created` INTEGER NOT NULL,
-`edited` INTEGER
+                                          `id`          INTEGER PRIMARY KEY AUTOINCREMENT,
+                                          `user_one_id` INTEGER,
+                                          `user_two_id` INTEGER,
+                                          `status`      INTEGER NOT NULL DEFAULT 0,
+                                          `message`     TEXT NOT NULL,
+                                          `sender_id`   INTEGER NOT NULL,
+                                          `created`     INTEGER NOT NULL,
+                                          `edited`      INTEGER
 );
 -- #    }
 -- #    {relationship
@@ -73,10 +74,14 @@ PRIMARY KEY(`user_id`)
 -- #      :user_id int
 SELECT * FROM bans WHERE `user_id` = :user_id;
 -- #    }
+-- #    {getall
+SELECT *
+FROM bans;
+-- #    }
 -- #    {add
 -- #      :user_id int
--- #      :since string
--- #      :until string
+-- #      :since int
+-- #      :until int
 -- #      :expires bool
 -- #      :reason string
 -- #      :types string
@@ -84,8 +89,8 @@ INSERT OR REPLACE INTO bans (`user_id`, `since`, `until`, `expires`, `reason`, `
 -- #    }
 -- #    {update
 -- #      :user_id int
--- #      :since string
--- #      :until string
+-- #      :since int
+-- #      :until int
 -- #      :expires bool
 -- #      :reason string
 -- #      :types string

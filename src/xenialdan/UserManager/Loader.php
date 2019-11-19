@@ -31,6 +31,8 @@ class Loader extends PluginBase
     public static $queries;
     /** @var UserStore */
     public static $userstore;
+    /** @var BanStore */
+    public static $banstore;
     /** @var string 3 letter */
     protected static $pluginLang = BaseLang::FALLBACK_LANGUAGE;
 
@@ -77,6 +79,8 @@ class Loader extends PluginBase
         self::$queries = new Queries();
         //User store
         self::$userstore = new UserStore();
+        //Ban store
+        self::$banstore = new BanStore();
         //events
         $this->getServer()->getPluginManager()->registerEvents(new GenericEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
