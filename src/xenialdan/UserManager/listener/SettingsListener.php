@@ -12,8 +12,8 @@ use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
 use pocketmine\network\mcpe\protocol\ServerSettingsRequestPacket;
 use pocketmine\network\mcpe\protocol\ServerSettingsResponsePacket;
 use pocketmine\Player;
-use xenialdan\customui\elements\Dropdown;
 use xenialdan\customui\elements\Input;
+use xenialdan\customui\elements\Label;
 use xenialdan\customui\elements\Toggle;
 use xenialdan\customui\windows\ServerForm;
 use xenialdan\UserManager\event\UserLoginEvent;
@@ -48,14 +48,18 @@ class SettingsListener implements Listener
     {
         $user = $event->getUser();
         var_dump($user);
-        Loader::$queries->createUserSettings($user->getId(), function (int $insertId, int $affectedRows) use ($user): void {
-            if ($affectedRows > 0) {
-                Loader::getInstance()->getLogger()->debug("Created entry $insertId in user_settings for user " . $user->getRealUsername());
-            }
-            Loader::$queries->getUserSettings($user->getId(), function (array $rows, array $columns) use ($user): void {
-                //TODO debug
-                var_dump("CREATE SETTINGS");
-                $user->setSettings(new UserSettings($rows[0]));
+        Loader::$queries->changeUserSettingsLanguage($user->getId(), $user->getPlayer()->getLocale(), function (int $affectedRows) use ($user): void {
+            var_dump(__METHOD__, "Changed $affectedRows rows");
+            Loader::$queries->createUserSettings($user->getId(), $user->getPlayer()->getLocale(), function (int $insertId, int $affectedRows) use ($user): void {
+                var_dump(__METHOD__, __LINE__);
+                if ($affectedRows > 0) {
+                    Loader::getInstance()->getLogger()->debug("Created entry $insertId in user_settings for user " . $user->getRealUsername());
+                }
+                Loader::$queries->getUserSettings($user->getId(), function (array $rows, array $columns) use ($user): void {
+                    //TODO debug
+                    var_dump("CREATE SETTINGS");
+                    $user->setSettings(new UserSettings($rows[0]), false);
+                });
             });
         });
     }
@@ -76,7 +80,7 @@ class SettingsListener implements Listener
                         {
                             if (strpos($entry, "language") !== false) {
                                 //hack TODO
-                                $form->addElement(new Dropdown($entry, [$value]));
+                                $form->addElement(new Label($value));
                                 break;
                             }
                             $form->addElement(new Input($row, /*translation*/ $entry, $value));

@@ -61,6 +61,7 @@ class Queries
     const CREATE_USER_SETTINGS = "usermanager.user_settings.create";
     const GET_USER_SETTINGS = "usermanager.user_settings.get";
     const SET_USER_SETTINGS = "usermanager.user_settings.set";
+    const SET_USER_SETTINGS_LANGUAGE = "usermanager.user_settings.setlang";
     //TODO exp, coins
 
     /**
@@ -432,12 +433,29 @@ class Queries
 
     /**
      * @param int $user_id
+     * @param string $u_language
      * @param callable $function
      */
-    public function createUserSettings(int $user_id, callable $function): void
+    public function createUserSettings(int $user_id, string $u_language = "en_US", callable $function): void
     {
         Loader::getDataProvider()->executeInsert(self::CREATE_USER_SETTINGS, [
-            "user_id" => $user_id
+            "user_id" => $user_id,
+            "u_language" => $u_language
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param int $user_id
+     * @param string $u_language
+     * @param callable $function
+     */
+    public function changeUserSettingsLanguage(int $user_id, string $u_language = "en_US", callable $function): void
+    {
+        Loader::getDataProvider()->executeChange(self::SET_USER_SETTINGS_LANGUAGE, [
+            "user_id" => $user_id,
+            "u_language" => $u_language
         ], $function, function (SqlError $error) {
             var_dump($error);
         });

@@ -91,7 +91,8 @@ class Translations
     {
         $language = self::getLanguage(Loader::getInstance()->getPluginLanguage());
         if ($user instanceof User && ($settings = $user->getSettings()) instanceof UserSettings) {
-            $language = self::getLanguage($settings->u_language);
+            $shortName = Loader::$localeMapping[$settings->u_language][0] ?? null;
+            $language = self::getLanguage($shortName);
         }
         return $language->translate(new TranslationContainer($entry, $params));
     }

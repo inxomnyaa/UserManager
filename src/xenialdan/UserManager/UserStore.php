@@ -53,7 +53,7 @@ class UserStore
 
     public static function addUser(User $user): void
     {
-        self::$users->put(strtolower($user->getUsername()), $user);
+        self::$users->put($user->getIUsername(), $user);
         Loader::getInstance()->getLogger()->debug("Added user $user");
     }
 

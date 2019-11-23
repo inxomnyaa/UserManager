@@ -14,7 +14,7 @@ class UserSettings implements JsonSerializable
     const PREFIX_BOOL = "t";
 
     /** @var string */
-    public $u_language = "eng";
+    public $u_language = "en_US";
     /** @var string */
     public $u_nickname = "";
     /** @var string */

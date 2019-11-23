@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace xenialdan\UserManager;
 
 use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 use xenialdan\UserManager\models\UserSettings;
 
 class User
 {
 
     private $id, $username, $ip, $flags = [];
-    private $banned = false;
     /** @var null|UserSettings */
     private $settings = null;
+    private $clientData = null;
 
     public function __construct($id = -1, string $username, string $ip, array/*PermissionFlags*/
     $flags = [])
@@ -22,7 +23,6 @@ class User
         $this->username = $username;
         $this->ip = $ip;
         $this->flags = $flags;
-        $this->settings = new UserSettings();
     }
 
     /**
@@ -60,6 +60,14 @@ class User
     /**
      * @return string
      */
+    public function getIUsername(): string
+    {
+        return strtolower($this->username);
+    }
+
+    /**
+     * @return string
+     */
     public function getRealUsername(): string
     {
         return $this->isOnline() ? $this->getPlayer()->getName() : $this->username;
@@ -79,22 +87,14 @@ class User
     }
 
     /**
-     * TODO
-     * @return bool
-     */
-    public function isBanned(): bool
-    {
-        return $this->banned;
-    }
-
-    /**
      * @return string
      */
     public function getDisplayName(): string
     {
-        $player = $this->getPlayer();
-        if ($player instanceof Player)
-            return $player->getDisplayName();
+        if ($this->settings instanceof UserSettings && !empty(trim(TextFormat::clean($this->settings->u_nickname))))
+            return $this->settings->u_nickname;
+        if ($this->isOnline())
+            return $this->getPlayer()->getDisplayName();
         return $this->username;
     }
 
@@ -156,18 +156,38 @@ class User
 
     /**
      * @param UserSettings $settings
+     * @param bool $query
      */
-    public function setSettings(UserSettings $settings): void
+    public function setSettings(UserSettings $settings, bool $query = true): void
     {
         $this->settings = $settings;
-        Loader::$queries->changeUserSettings($this->getId(), $settings, function (int $affectedRows): void {
+        if ($query) Loader::$queries->changeUserSettings($this->getId(), $settings, function (int $affectedRows): void {
             var_dump(__METHOD__, "Changed $affectedRows rows");
         });
+        $name = $settings->u_nickname;
+        if (!empty(trim(TextFormat::clean($name)))) $this->getPlayer()->setDisplayName($name);//TODO cleanup
+        else $this->getPlayer()->setDisplayName($this->getPlayer()->getName());
     }
 
     public function __toString(): string
     {
         $result = var_export(get_object_vars($this), true);
         return $result;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getClientData(): ?array
+    {
+        return $this->clientData;
+    }
+
+    /**
+     * @param array|null $clientData
+     */
+    public function setClientData(?array $clientData): void
+    {
+        $this->clientData = $clientData;
     }
 }

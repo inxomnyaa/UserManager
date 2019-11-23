@@ -8,6 +8,7 @@ use InvalidStateException;
 use pocketmine\lang\BaseLang;
 use pocketmine\plugin\PluginBase;
 use pocketmine\plugin\PluginException;
+use pocketmine\utils\Config;
 use poggit\libasynql\DataConnector;
 use poggit\libasynql\libasynql;
 use poggit\libasynql\SqlError;
@@ -33,8 +34,10 @@ class Loader extends PluginBase
     public static $userstore;
     /** @var BanStore */
     public static $banstore;
-    /** @var string 3 letter */
+    /** @var string 3 letter iso639-2 */
     protected static $pluginLang = BaseLang::FALLBACK_LANGUAGE;
+    /** @var array MC locale -> iso639-2 */
+    public static $localeMapping = [];
 
     /**
      * Returns an instance of the plugin
@@ -105,9 +108,22 @@ class Loader extends PluginBase
             $this->getConfig()->save();
         } finally {
             self::$pluginLang = $lang;
-            $this->getLogger()->debug("Plugin language set to ".Translations::getLanguage()->getName());
+            $this->getLogger()->debug("Plugin language set to " . Translations::getLanguage()->getName());
             Translations::languageNeedsUpdate($lang);
         }
+        //Ugly, but works. Creates an array similar to this: array["en_US"]=["eng","English (United States)"]
+        $mapping = [];
+        $isoConfig = new Config($this->getFile() . "resources" . DIRECTORY_SEPARATOR . "iso639-2mapping.json");
+        $namesConfig = new Config($this->getFile() . "resources" . DIRECTORY_SEPARATOR . "language_names.json");
+        foreach ($isoConfig->getAll() as [$locale, $iso]) {
+            $mapping[$locale] = [];
+            $mapping[$locale][0] = $iso;
+        }
+        foreach ($namesConfig->getAll() as [$locale, $name]) {
+            $mapping[$locale] = $mapping[$locale] ?? [];
+            $mapping[$locale][1] = $name;
+        }
+        self::$localeMapping = $mapping;
     }
 
     public function onDisable()

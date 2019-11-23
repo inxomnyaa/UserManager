@@ -17,6 +17,7 @@ use xenialdan\UserManager\User;
 
 class GenericEventListener implements Listener
 {
+    private static $clientData = [];
 
     /**
      * @param DataPacketReceiveEvent $event
@@ -29,14 +30,13 @@ class GenericEventListener implements Listener
     }
 
     /**
-     * TODO handle ban
      * @param DataPacketReceiveEvent $event
      */
     private function onLoginPacket(DataPacketReceiveEvent $event)
     {
         /** @var LoginPacket $pk */
         $pk = $event->getPacket();
-        var_dump($pk->clientData, $pk->locale, $pk->username, $pk->protocol, $pk->clientUUID, $pk->clientId, $pk->xuid, $pk->identityPublicKey, $pk->serverAddress);
+        self::$clientData[$pk->clientUUID] = $pk->clientData;
     }
 
     /**
@@ -47,22 +47,15 @@ class GenericEventListener implements Listener
     {
         $player = $event->getPlayer();
         if (!($user = Loader::$userstore::getUser($player)) instanceof User) {
-            Loader::$queries->getUser($player->getLowerCaseName(), function (array $rows) use ($player): void {
+            Loader::$queries->getUser($player->getName(), function (array $rows) use ($player): void {
                 if (empty($rows)) {
-                    Loader::$userstore::createNewUser($player->getLowerCaseName(), $player->getAddress(), []);
+                    Loader::$userstore::createNewUser($player->getName(), $player->getAddress(), []);
                 } else {
                     Loader::$userstore::createUser($rows[0]["user_id"], $rows[0]["username"], $player->getAddress());
                 }
             });
         } else {
-            $name = $user->getSettings()->u_nickname;
-            if (!empty(trim(TextFormat::clean($name)))) $player->setDisplayName($name);//TODO CRITICAL: check if settings already properly init
             /* TODO HANDLE BAN & WARN CHECKS HERE */
-            var_dump($player->getLocale());
-            var_dump($player->getUniqueId());
-            var_dump($player->getName());
-            var_dump($player->getDisplayName());
-            var_dump($player->getAddress());
             $ban = Loader::$banstore::getBanById($user->getId());
             if ($ban instanceof Ban) {
                 $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!" . TextFormat::EOL . $ban->reason;
@@ -75,9 +68,6 @@ class GenericEventListener implements Listener
                     $kick = true;
                 }
                 //TODO UUID, XUID
-                /*if($ban->isTypeBanned(Ban::TYPE_UUID) && $player->getUniqueId() === $ban->){
-                    $kick = true;
-                }*/
                 if ($kick) {
                     //TODO check why kick message does not appear + stuck in loading resources
                     Loader::getInstance()->getLogger()->debug($debug);
@@ -85,7 +75,10 @@ class GenericEventListener implements Listener
                     $event->setCancelled();
                     $player->kick($msg, false);
                 }
+                return;
             }
+            $user->setClientData(self::$clientData[$event->getPlayer()->getUniqueId()->toString()] ?? null);
+            $event->getPlayer()->setDisplayName($user->getDisplayName());
         }
     }
 

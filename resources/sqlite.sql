@@ -11,14 +11,14 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- #    }
 -- #    {user_settings
 CREATE TABLE IF NOT EXISTS `user_settings` (
-`user_id` INTEGER NOT NULL UNIQUE,
-`u_language` TEXT DEFAULT 'eng',
-`u_nickname` TEXT DEFAULT '',
-`u_profile_message` TEXT DEFAULT '',
-`t_allow_user_find` INTEGER DEFAULT 1,
-`t_allow_friend_request` INTEGER DEFAULT 1,
-`t_allow_message` INTEGER DEFAULT 1,
-`t_allow_online_status` INTEGER DEFAULT 1
+                                               `user_id`                INTEGER NOT NULL UNIQUE,
+                                               `u_language`             TEXT    DEFAULT 'en_US',
+                                               `u_nickname`             TEXT    DEFAULT '',
+                                               `u_profile_message`      TEXT    DEFAULT '',
+                                               `t_allow_user_find`      INTEGER DEFAULT 1,
+                                               `t_allow_friend_request` INTEGER DEFAULT 1,
+                                               `t_allow_message`        INTEGER DEFAULT 1,
+                                               `t_allow_online_status`  INTEGER DEFAULT 1
 );
 -- #    }
 -- #    {authcode
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `bans` (
                                       `expires` INTEGER NOT NULL,
                                       `reason`  TEXT    NOT NULL DEFAULT '',
                                       `types`   TEXT    NOT NULL DEFAULT 'n',
-                                      PRIMARY KEY(`user_id`)
+                                      PRIMARY KEY (`user_id`)
 );
 -- #    }
 -- #    {messages
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
                                           `user_one_id` INTEGER,
                                           `user_two_id` INTEGER,
                                           `status`      INTEGER NOT NULL DEFAULT 0,
-                                          `message`     TEXT NOT NULL,
+                                          `message`     TEXT    NOT NULL,
                                           `sender_id`   INTEGER NOT NULL,
                                           `created`     INTEGER NOT NULL,
                                           `edited`      INTEGER
@@ -262,7 +262,9 @@ UPDATE `messages` SET `status` = 2,`edited` = :edited WHERE (`user_one_id` = :us
 -- #  {user_settings
 -- #    {create
 -- #      :user_id int
-INSERT INTO `user_settings` (`user_id`) VALUES (:user_id);
+-- #      :u_language string
+INSERT OR IGNORE INTO `user_settings` (`user_id`, `u_language`)
+VALUES (:user_id, :u_language);
 -- #    }
 -- #    {get
 -- #      :user_id int
@@ -278,6 +280,13 @@ SELECT `u_language`,`u_nickname`,`u_profile_message`,`t_allow_user_find`,`t_allo
 -- #      :t_allow_online_status bool
 -- #      :user_id int
 UPDATE `user_settings` SET `u_language`=:u_language,`u_nickname`=:u_nickname,`u_profile_message`=:u_profile_message,`t_allow_user_find`=:t_allow_user_find,`t_allow_friend_request`=:t_allow_friend_request,`t_allow_message`=:t_allow_message,`t_allow_online_status`=:t_allow_online_status WHERE `user_id` = :user_id;
+-- #    }
+-- #    {setlang
+-- #      :u_language string
+-- #      :user_id int
+UPDATE `user_settings`
+SET `u_language`=:u_language
+WHERE `user_id` = :user_id;
 -- #    }
 -- #  }
 -- #}
