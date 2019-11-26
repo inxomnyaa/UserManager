@@ -11,7 +11,7 @@ use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
 
-class Translations
+class Translations implements Translation
 {
 
     /** @var BaseLang[] */
@@ -90,8 +90,8 @@ class Translations
     public static function translate(string $entry, array $params = [], ?User $user = null): string
     {
         $language = self::getLanguage(Loader::getInstance()->getPluginLanguage());
-        if ($user instanceof User && ($settings = $user->getSettings()) instanceof UserSettings) {
-            $shortName = Loader::$localeMapping[$settings->u_language][0] ?? null;
+        if ($user instanceof User && $user->isOnline()) {
+            $shortName = Loader::$localeMapping[$user->getPlayer()->getLocale()][0] ?? null;
             $language = self::getLanguage($shortName);
         }
         return $language->translate(new TranslationContainer($entry, $params));

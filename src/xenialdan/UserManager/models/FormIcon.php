@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace xenialdan\UserManager;
+namespace xenialdan\UserManager\models;
 
-class FormIcon
+interface FormIcon
 {
     public const FRIENDLIST = "textures/ui/FriendsDiversity";
     public const GREEN_BOOK = "textures/ui/creative_icon";

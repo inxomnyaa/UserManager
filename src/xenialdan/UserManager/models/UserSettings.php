@@ -34,18 +34,17 @@ class UserSettings implements JsonSerializable
         /** @var ReflectionClass $reflectionClass */
         $reflectionClass = new ReflectionClass(UserSettings::class);
         foreach ($reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $key => $property) {
-            $this->{$property->getName()} = $data[$key] ?? $data[$property->getName()];
+            if (isset($data[$key]) || isset($data[$property->getName()])) {
+                $var = $data[$key] ?? $data[$property->getName()];
+                if (is_bool($this->{$property->getName()})) $var = boolval($var);
+                $this->{$property->getName()} = $var;
+            }
         }
     }
 
     public function compare(UserSettings $settings): array
     {
-        $other = $settings->jsonSerialize();
-        return array_filter($this->jsonSerialize(), function ($value, $key) use ($other): bool {
-            #var_dump($value,$key,$other[$key]??null);
-            if ($value === null || $other[$key] ?? null === null) return false;
-            return $other[$key] !== $value;
-        }, ARRAY_FILTER_USE_BOTH);
+        return array_diff_assoc($this->jsonSerialize(), $settings->jsonSerialize());
     }
 
     /**
