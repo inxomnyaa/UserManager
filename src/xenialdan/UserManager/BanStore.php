@@ -16,7 +16,7 @@ class BanStore
      */
     private static $bans;
 
-    public function __construct()
+    public static function init(): void
     {
         self::$bans = new Map();
         Loader::$queries->getBanList(function (array $rows): void {

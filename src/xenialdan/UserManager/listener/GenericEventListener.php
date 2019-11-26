@@ -10,6 +10,7 @@ use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\utils\TextFormat;
 use ReflectionException;
 use RuntimeException;
+use xenialdan\UserManager\BanStore;
 use xenialdan\UserManager\event\UserLoginEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\models\Ban;
@@ -57,7 +58,7 @@ class GenericEventListener implements Listener
             });
         } else {
             /* TODO HANDLE BAN & WARN CHECKS HERE */
-            $ban = Loader::$banstore::getBanById($user->getId());
+            $ban = BanStore::getBanById($user->getId());
             if ($ban instanceof Ban) {
                 $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!" . TextFormat::EOL . $ban->reason;
                 $debug = "Banned user tried to log in:" . TextFormat::EOL . $ban;

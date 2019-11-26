@@ -33,6 +33,7 @@ class SettingsListener implements Listener
 
     /**
      * @param DataPacketReceiveEvent $event
+     * @throws LanguageException
      */
     public function onPacket(DataPacketReceiveEvent $event)
     {
@@ -137,6 +138,7 @@ class SettingsListener implements Listener
      * Clone of \pocketmine\Player::sendForm()
      * TODO HACK. remove when pmmp supports sending of ServerSettingsForm
      * @param DataPacketReceiveEvent $event
+     * @return bool
      */
     private function onSettingsModalResponse(DataPacketReceiveEvent $event): bool
     {

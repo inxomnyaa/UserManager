@@ -30,10 +30,6 @@ class Loader extends PluginBase
     private $database;
     /** @var Queries */
     public static $queries;
-    /** @var UserStore */
-    public static $userstore;
-    /** @var BanStore */
-    public static $banstore;
     /** @var string 3 letter iso639-2 */
     protected static $pluginLang = BaseLang::FALLBACK_LANGUAGE;
     /** @var array MC locale -> iso639-2 */
@@ -81,10 +77,9 @@ class Loader extends PluginBase
         //create tables
         self::$queries = new Queries();
         //User store
-        #self::$userstore = new UserStore();
         UserStore::init();
         //Ban store
-        self::$banstore = new BanStore();
+        BanStore::init();
         //events
         $this->getServer()->getPluginManager()->registerEvents(new GenericEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
