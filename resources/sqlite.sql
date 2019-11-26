@@ -11,14 +11,14 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- #    }
 -- #    {user_settings
 CREATE TABLE IF NOT EXISTS `user_settings` (
-                                               `user_id`                INTEGER NOT NULL UNIQUE,
-                                               `u_language`             TEXT    DEFAULT 'en_US',
-                                               `u_nickname`             TEXT    DEFAULT '',
-                                               `u_profile_message`      TEXT    DEFAULT '',
-                                               `t_allow_user_find`      INTEGER DEFAULT 1,
-                                               `t_allow_friend_request` INTEGER DEFAULT 1,
-                                               `t_allow_message`        INTEGER DEFAULT 1,
-                                               `t_allow_online_status`  INTEGER DEFAULT 1
+`user_id`                INTEGER NOT NULL UNIQUE,
+`u_language`             TEXT    DEFAULT 'en_US',
+`u_nickname`             TEXT    DEFAULT '',
+`u_profile_message`      TEXT    DEFAULT '',
+`t_allow_user_find`      INTEGER DEFAULT 1,
+`t_allow_friend_request` INTEGER DEFAULT 1,
+`t_allow_message`        INTEGER DEFAULT 1,
+`t_allow_online_status`  INTEGER DEFAULT 1
 );
 -- #    }
 -- #    {authcode
@@ -30,25 +30,25 @@ PRIMARY KEY(`user_id`)
 -- #    }
 -- #    {bans
 CREATE TABLE IF NOT EXISTS `bans` (
-                                      `user_id` INTEGER NOT NULL,
-                                      `since`   INTEGER NOT NULL,
-                                      `until`   INTEGER NOT NULL,
-                                      `expires` INTEGER NOT NULL,
-                                      `reason`  TEXT    NOT NULL DEFAULT '',
-                                      `types`   TEXT    NOT NULL DEFAULT 'n',
-                                      PRIMARY KEY (`user_id`)
+`user_id` INTEGER NOT NULL,
+`since`   INTEGER NOT NULL,
+`until`   INTEGER NOT NULL,
+`expires` INTEGER NOT NULL,
+`reason`  TEXT    NOT NULL DEFAULT '',
+`types`   TEXT    NOT NULL DEFAULT 'n',
+PRIMARY KEY (`user_id`)
 );
 -- #    }
 -- #    {messages
 CREATE TABLE IF NOT EXISTS `messages` (
-                                          `id`          INTEGER PRIMARY KEY AUTOINCREMENT,
-                                          `user_one_id` INTEGER,
-                                          `user_two_id` INTEGER,
-                                          `status`      INTEGER NOT NULL DEFAULT 0,
-                                          `message`     TEXT    NOT NULL,
-                                          `sender_id`   INTEGER NOT NULL,
-                                          `created`     INTEGER NOT NULL,
-                                          `edited`      INTEGER
+`id`          INTEGER PRIMARY KEY AUTOINCREMENT,
+`user_one_id` INTEGER,
+`user_two_id` INTEGER,
+`status`      INTEGER NOT NULL DEFAULT 0,
+`message`     TEXT    NOT NULL,
+`sender_id`   INTEGER NOT NULL,
+`created`     INTEGER NOT NULL,
+`edited`      INTEGER
 );
 -- #    }
 -- #    {relationship
@@ -75,8 +75,7 @@ PRIMARY KEY(`user_id`)
 SELECT * FROM bans WHERE `user_id` = :user_id;
 -- #    }
 -- #    {getall
-SELECT *
-FROM bans;
+SELECT * FROM bans;
 -- #    }
 -- #    {add
 -- #      :user_id int
@@ -263,8 +262,7 @@ UPDATE `messages` SET `status` = 2,`edited` = :edited WHERE (`user_one_id` = :us
 -- #    {create
 -- #      :user_id int
 -- #      :u_language string
-INSERT OR IGNORE INTO `user_settings` (`user_id`, `u_language`)
-VALUES (:user_id, :u_language);
+INSERT OR IGNORE INTO `user_settings` (`user_id`, `u_language`) VALUES (:user_id, :u_language);
 -- #    }
 -- #    {get
 -- #      :user_id int
@@ -284,9 +282,7 @@ UPDATE `user_settings` SET `u_language`=:u_language,`u_nickname`=:u_nickname,`u_
 -- #    {setlang
 -- #      :u_language string
 -- #      :user_id int
-UPDATE `user_settings`
-SET `u_language`=:u_language
-WHERE `user_id` = :user_id;
+UPDATE `user_settings` SET `u_language`=:u_language WHERE `user_id` = :user_id;
 -- #    }
 -- #  }
 -- #}
