@@ -166,7 +166,7 @@ class API
      */
     public static function openFriendsUI(Player $player, ?Form $previousForm = null): void
     {
-        $user = Loader::$userstore::getUser($player);
+        $user = UserStore::getUser($player);
         if ($user === null) {
             $player->sendMessage("DEBUG: null");
             return;
@@ -228,13 +228,13 @@ class API
         $form->addElement(new Input("Search user", "Username"));
         $options = array_values(array_map(function (User $user): string {
             return $user->getRealUsername();
-        }, array_filter(Loader::$userstore::getUsers(), function (User $user) use ($player): bool {
+        }, array_filter(UserStore::getUsers(), function (User $user) use ($player): bool {
             return $user->getUsername() !== $player->getLowerCaseName();
         })));
         $form->addElement(new Dropdown("Select user", $options));
         $form->setCallable(function (Player $player, array $data) use ($form): void {
             if (empty(($name = $data[0]))) $name = $data[1];
-            if (($user = (Loader::$userstore::getUserByName($name))) instanceof User && $user->getUsername() !== $player->getLowerCaseName()) {
+            if (($user = (UserStore::getUserByName($name))) instanceof User && $user->getUsername() !== $player->getLowerCaseName()) {
                 API::openFriendConfirmUI($player, $user, $form);
             } else {
                 API::openUserNotFoundUI($player, $name, $form);
@@ -253,7 +253,7 @@ class API
         $form = new CustomForm("Friend Manager - Search");
         $form->addElement(new Input("Search user", "Username"));
         $form->setCallable(function (Player $player, array $data) use ($form): void {
-            if (($user = (Loader::$userstore::getUserByName($name = $data[0]))) instanceof User && $user->getUsername() !== $player->getLowerCaseName()) {
+            if (($user = (UserStore::getUserByName($name = $data[0]))) instanceof User && $user->getUsername() !== $player->getLowerCaseName()) {
                 API::openUserUI($player, $user, $form);
             } else {
                 API::openUserNotFoundUI($player, $name, $form);
@@ -387,7 +387,7 @@ class API
      */
     public static function openFriendListUI(Player $player, ?Form $previousForm = null): void
     {
-        $user = Loader::$userstore::getUser($player);
+        $user = UserStore::getUser($player);
         if ($user === null) {
             $player->sendMessage("DEBUG: null");
             return;
@@ -401,7 +401,7 @@ class API
             $form->setCallable(function (Player $player, string $data) use ($form, $previousForm): void {
                 if ($data === "Back") {
                     if ($previousForm) $player->sendForm($previousForm);
-                } else API::openUserUI($player, Loader::$userstore::getUserByName($data), $form);
+                } else API::openUserUI($player, UserStore::getUserByName($data), $form);
             });
             $player->sendForm($form);
         });
@@ -414,7 +414,7 @@ class API
      */
     public static function openBlockedListUI(Player $player, ?Form $previousForm = null): void
     {
-        $user = Loader::$userstore::getUser($player);
+        $user = UserStore::getUser($player);
         if ($user === null) {
             $player->sendMessage("DEBUG: null");
             return;
@@ -428,7 +428,7 @@ class API
             $form->setCallable(function (Player $player, string $data) use ($form, $previousForm): void {
                 if ($data === "Back") {
                     if ($previousForm) $player->sendForm($previousForm);
-                } else API::openUserUI($player, Loader::$userstore::getUserByName($data), $form);
+                } else API::openUserUI($player, UserStore::getUserByName($data), $form);
             });
             $player->sendForm($form);
         });
@@ -441,7 +441,7 @@ class API
      */
     public static function openFriendRequestUI(Player $player, ?Form $previousForm = null): void
     {
-        $user = Loader::$userstore::getUser($player);
+        $user = UserStore::getUser($player);
         if ($user === null) {
             $player->sendMessage("DEBUG: null");
             return;
@@ -455,7 +455,7 @@ class API
             $form->setCallable(function (Player $player, string $data) use ($form, $previousForm): void {
                 if ($data === "Back") {
                     if ($previousForm) $player->sendForm($previousForm);
-                } else API::openRequestUserUI($player, Loader::$userstore::getUserByName($data), $form);
+                } else API::openRequestUserUI($player, UserStore::getUserByName($data), $form);
             });
             $player->sendForm($form);
         });
@@ -463,7 +463,7 @@ class API
 
     public static function sendFriendRequest(Player $player, User $friend): void
     {
-        if (($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->setUserRelation($user->getId(), $friend->getId(), API::FRIEND_PENDING, function (int $insertId, int $affectedRows) use ($player, $user, $friend) {
                 if ($affectedRows > 0) {
                     $player->sendMessage("Friend request sent to " . $friend->getDisplayName());
@@ -475,7 +475,7 @@ class API
 
     public static function removeFriend(Player $player, User $friend): void
     {
-        if (($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->removeUserRelation($user->getId(), $friend->getId(), function (int $affectedRows) use ($player, $user, $friend) {
                 if ($affectedRows > 0) {
                     $player->sendMessage("Friend " . $friend->getDisplayName() . " removed");
@@ -487,7 +487,7 @@ class API
 
     public static function acceptFriendRequest(Player $player, User $friend): void
     {
-        if (($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->setUserRelation($user->getId(), $friend->getId(), API::FRIEND_ACCEPTED, function (int $insertId, int $affectedRows) use ($player, $user, $friend) {
                 if ($affectedRows > 0) {
                     $player->sendMessage("Accepted friend request by " . $friend->getDisplayName());
@@ -499,7 +499,7 @@ class API
 
     public static function rejectFriendRequest(Player $player, User $friend): void
     {
-        if (($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->setUserRelation($user->getId(), $friend->getId(), API::FRIEND_DECLINED, function (int $insertId, int $affectedRows) use ($player, $user, $friend) {
                 if ($affectedRows > 0) {
                     $player->sendMessage("Rejected friend request by " . $friend->getDisplayName());
@@ -511,7 +511,7 @@ class API
 
     public static function blockUser(Player $player, User $friend): void
     {
-        if (($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->setUserRelation($user->getId(), $friend->getId(), API::FRIEND_BLOCKED, function (int $insertId, int $affectedRows) use ($player, $user, $friend) {
                 if ($affectedRows > 0) {
                     $player->sendMessage("Blocked user " . $friend->getDisplayName());
@@ -523,12 +523,12 @@ class API
 
     public static function sendJoinMessages(Player $player): void
     {
-        if (($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (($user = UserStore::getUser($player)) instanceof User) {
             //Op messages
             if ($player->isOp()) {
-                $player->sendMessage(count(array_filter(Loader::$userstore::getUsers(), function (User $user): bool {
+                $player->sendMessage(count(array_filter(UserStore::getUsers(), function (User $user): bool {
                         return $user->isOnline();
-                    })) . "/" . count(Loader::$userstore::getUsers()) . " registered users online right now");
+                    })) . "/" . count(UserStore::getUsers()) . " registered users online right now");
             }
             //Friend messages
             Loader::$queries->getFriends($user->getId(), function (array $rows) use ($player, $user): void {

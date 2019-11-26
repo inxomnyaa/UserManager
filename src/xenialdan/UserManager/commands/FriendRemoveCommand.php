@@ -11,8 +11,8 @@ use CortexPE\Commando\exception\ArgumentOrderException;
 use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use xenialdan\UserManager\API;
-use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
+use xenialdan\UserManager\UserStore;
 
 class FriendRemoveCommand extends BaseSubCommand
 {
@@ -35,7 +35,7 @@ class FriendRemoveCommand extends BaseSubCommand
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        $user = Loader::$userstore::getUser($sender);
+        $user = UserStore::getUser($sender);
         if ($user === null) {
             $sender->sendMessage("DEBUG: null");
             return;
@@ -45,7 +45,7 @@ class FriendRemoveCommand extends BaseSubCommand
             $sender->sendMessage("Invalid name given");
             return;
         }
-        if (($friend = (Loader::$userstore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
+        if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
             API::openFriendRemoveConfirmUI($sender, $friend);
         } else {
             API::openUserNotFoundUI($sender, $name);

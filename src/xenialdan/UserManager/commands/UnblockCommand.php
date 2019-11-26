@@ -12,8 +12,8 @@ use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
-use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
+use xenialdan\UserManager\UserStore;
 
 class UnblockCommand extends BaseCommand
 {
@@ -45,7 +45,7 @@ class UnblockCommand extends BaseCommand
                 $sender->sendMessage("Invalid name given");
                 return;
             }
-            if (($friend = (Loader::$userstore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
+            if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
                 API::openUnblockUserUI($sender, $friend);
             } else {
                 API::openUserNotFoundUI($sender, $name);

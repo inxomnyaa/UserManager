@@ -120,7 +120,7 @@ class User
     {
         $friends = [];
         foreach ($rows as $userData) {
-            if (($friend = Loader::$userstore::getUserByName($userData["username"])) instanceof User) {
+            if (($friend = UserStore::getUserByName($userData["username"])) instanceof User) {
                 $friends[] = $friend;
             }
         }
@@ -139,7 +139,7 @@ class User
         foreach ($rows as $userData) {
             $friendId = (int)$userData["user_one_id"];
             if ($friendId === $userId) $friendId = (int)$userData["user_two_id"];
-            if (($friend = Loader::$userstore::getUserById($friendId)) instanceof User) {
+            if (($friend = UserStore::getUserById($friendId)) instanceof User) {
                 $friends[] = $friend;
             }
         }

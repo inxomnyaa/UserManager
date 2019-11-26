@@ -14,6 +14,7 @@ use xenialdan\UserManager\event\UserLoginEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\models\Ban;
 use xenialdan\UserManager\User;
+use xenialdan\UserManager\UserStore;
 
 class GenericEventListener implements Listener
 {
@@ -46,12 +47,12 @@ class GenericEventListener implements Listener
     public function onConnect(PlayerPreLoginEvent $event)
     {
         $player = $event->getPlayer();
-        if (!($user = Loader::$userstore::getUser($player)) instanceof User) {
+        if (!($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->getUser($player->getName(), function (array $rows) use ($player): void {
                 if (empty($rows)) {
-                    Loader::$userstore::createNewUser($player->getName(), $player->getAddress(), []);
+                    UserStore::createNewUser($player->getName(), $player->getAddress(), []);
                 } else {
-                    Loader::$userstore::createUser($rows[0]["user_id"], $rows[0]["username"], $player->getAddress());
+                    UserStore::createUser($rows[0]["user_id"], $rows[0]["username"], $player->getAddress());
                 }
             });
         } else {
@@ -90,7 +91,7 @@ class GenericEventListener implements Listener
     public function onJoin(PlayerJoinEvent $event): void
     {
         var_dump(__METHOD__);
-        if (($user = Loader::$userstore::getUser($event->getPlayer())) instanceof User) {
+        if (($user = UserStore::getUser($event->getPlayer())) instanceof User) {
             var_dump($user);
             $ev = new UserLoginEvent($user);
             $ev->call();

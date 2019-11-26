@@ -138,7 +138,7 @@ class SettingsListener implements Listener
      * TODO HACK. remove when pmmp supports sending of ServerSettingsForm
      * @param DataPacketReceiveEvent $event
      */
-    private function onSettingsModalResponse(DataPacketReceiveEvent $event)
+    private function onSettingsModalResponse(DataPacketReceiveEvent $event): bool
     {
         /** @var ModalFormResponsePacket $pk */
         $pk = $event->getPacket();
@@ -156,11 +156,13 @@ class SettingsListener implements Listener
                 }
             }
         }
+        return true;
     }
 
-    private function onSettingsResponse(DataPacketReceiveEvent $event)
+    private function onSettingsResponse(DataPacketReceiveEvent $event): bool
     {
         Loader::getInstance()->getLogger()->error($event->getPacket()->pid() . " " . $event->getPacket()->getName() . " received. This should not happen (sadly, because #blamemojang for using ModalForm as response). This error can be ignored.");
         var_dump($event->getPacket());
+        return true;
     }
 }

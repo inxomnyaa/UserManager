@@ -16,7 +16,18 @@ class UserStore
      */
     private static $users;
 
-    public function __construct()
+    /*public function __construct()
+    {
+        self::$users = new Map();
+        Loader::$queries->getUserList(function (array $rows): void {
+            foreach ($rows as $userData) {
+                self::createUser($userData["user_id"], $userData["username"], $userData["lastip"]);
+            }
+            Loader::getInstance()->getLogger()->info(self::$users->count() . " users loaded from database");
+        });
+    }*/
+
+    public static function init(): void
     {
         self::$users = new Map();
         Loader::$queries->getUserList(function (array $rows): void {

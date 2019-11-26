@@ -19,7 +19,7 @@ class ChatListener implements Listener
     public function onChat(PlayerChatEvent $event): void
     {
         return;//TODO
-        /*if (($user = Loader::$userstore::getUser($player = $event->getPlayer())) instanceof User) {
+        /*if (($user = UserStore::getUser($player = $event->getPlayer())) instanceof User) {
             $rec = $event->getRecipients();
             $rec = array_filter($rec, function (Player $player): bool {
                 return true;//TODO return false if blocked or muted

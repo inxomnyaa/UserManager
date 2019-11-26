@@ -14,8 +14,8 @@ use pocketmine\Player;
 use xenialdan\customui\elements\Button;
 use xenialdan\customui\windows\SimpleForm;
 use xenialdan\UserManager\API;
-use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
+use xenialdan\UserManager\UserStore;
 
 class ListUserCommand extends BaseSubCommand
 {
@@ -39,7 +39,7 @@ class ListUserCommand extends BaseSubCommand
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         /** @var Player $sender */
-        $users = Loader::$userstore::getUsers();
+        $users = UserStore::getUsers();
         if (!($args["ui"] ?? false)) {
             $form = new SimpleForm("Registered users");
             foreach ($users as $user) {
@@ -47,7 +47,7 @@ class ListUserCommand extends BaseSubCommand
             }
             $form->setCallable(function (Player $player, string $data) use ($form): void {
                 var_dump($data);
-                API::openUserUI($player, Loader::$userstore::getUserByName($data), $form);
+                API::openUserUI($player, UserStore::getUserByName($data), $form);
             });
             $sender->sendForm($form);
             return;

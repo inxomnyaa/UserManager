@@ -13,6 +13,7 @@ use pocketmine\Player;
 use xenialdan\UserManager\API;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\User;
+use xenialdan\UserManager\UserStore;
 
 class FriendRequestsCommand extends BaseSubCommand
 {
@@ -39,7 +40,7 @@ class FriendRequestsCommand extends BaseSubCommand
             API::openFriendRequestUI($sender);
             return;
         }
-        $user = Loader::$userstore::getUser($sender);
+        $user = UserStore::getUser($sender);
         if ($user === null) {
             $sender->sendMessage("DEBUG: null");
             return;

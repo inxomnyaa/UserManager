@@ -49,7 +49,7 @@ class BanStore
 
     public static function getBanByName(string $playername): ?Ban
     {
-        $user = Loader::$userstore::getUserByName($playername);
+        $user = UserStore::getUserByName($playername);
         if ($user instanceof User) return self::getBanById($user->getId());
         return null;
     }

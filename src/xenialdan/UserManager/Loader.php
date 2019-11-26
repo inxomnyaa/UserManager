@@ -81,7 +81,8 @@ class Loader extends PluginBase
         //create tables
         self::$queries = new Queries();
         //User store
-        self::$userstore = new UserStore();
+        #self::$userstore = new UserStore();
+        UserStore::init();
         //Ban store
         self::$banstore = new BanStore();
         //events
