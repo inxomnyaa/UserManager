@@ -11,9 +11,11 @@ use pocketmine\utils\TextFormat;
 use xenialdan\customui\elements\Button;
 use xenialdan\customui\elements\Dropdown;
 use xenialdan\customui\elements\Input;
+use xenialdan\customui\elements\Toggle;
 use xenialdan\customui\windows\CustomForm;
 use xenialdan\customui\windows\ModalForm;
 use xenialdan\customui\windows\SimpleForm;
+use xenialdan\UserManager\models\Ban;
 
 class API
 {
@@ -202,7 +204,13 @@ class API
                 }
                 case "Search user":
                 {
-                    API::openUserSearchUI($player);
+                    API::openUserSearchUI(
+                        $player,
+                        "Friend Manager - Search",
+                        function ($player, $user, $form): void {
+                            API::openUserUI($player, $user, $form);
+                        }
+                    );
                     break;
                 }
                 case "Blocked users":
@@ -224,6 +232,7 @@ class API
      */
     public static function openFriendAddUI(Player $player): void
     {
+        //TODO use openUserSearchUI
         $form = new CustomForm("Friend Manager - Add");
         $form->addElement(new Input("Search user", "Username"));
         $options = array_values(array_map(function (User $user): string {
@@ -246,15 +255,17 @@ class API
     /**
      * TODO
      * @param Player $player
+     * @param string $title
+     * @param callable $continueAt
      * @throws InvalidArgumentException
      */
-    public static function openUserSearchUI(Player $player): void
+    public static function openUserSearchUI(Player $player, string $title, callable $continueAt): void
     {
-        $form = new CustomForm("Friend Manager - Search");
+        $form = new CustomForm($title);
         $form->addElement(new Input("Search user", "Username"));
-        $form->setCallable(function (Player $player, array $data) use ($form): void {
+        $form->setCallable(function (Player $player, array $data) use ($form, $continueAt): void {
             if (($user = (UserStore::getUserByName($name = $data[0]))) instanceof User && $user->getUsername() !== $player->getLowerCaseName()) {
-                API::openUserUI($player, $user, $form);
+                $continueAt($player, $user, $form);
             } else {
                 API::openUserNotFoundUI($player, $name, $form);
             }
@@ -550,5 +561,110 @@ class API
             });
             //Messages
         }
+    }
+
+    /**
+     * TODO
+     * @param Player $player
+     * @param Form|null $previousForm
+     */
+    public static function openBannedListUI(Player $player, ?Form $previousForm = null): void
+    {
+        $user = UserStore::getUser($player);
+        if ($user === null) {
+            $player->sendMessage("DEBUG: null");
+            return;
+        }
+        $form = new SimpleForm("Ban Manager - Banned users");
+        foreach (BanStore::getBans() as $ban) {
+            $form->addButton(new Button(TextFormat::DARK_RED . UserStore::getUserById($ban->getUserId())->getRealUsername()));//TODO image
+        }
+        $form->addButton(new Button("Back"));
+        $form->setCallable(function (Player $player, string $data) use ($form, $previousForm): void {
+            if ($data === "Back") {
+                if ($previousForm) $player->sendForm($previousForm);
+            } else API::openBanEntryUI($player, BanStore::getBanByName($data), $form);
+        });
+        $player->sendForm($form);
+    }
+
+    /**
+     * @param Player $player
+     * @param Ban $ban
+     * @param Form|null $previousForm
+     * @throws InvalidArgumentException
+     */
+    public static function openBanEntryUI(Player $player, Ban $ban, ?Form $previousForm = null): void
+    {
+        if (($user = UserStore::getUserById($ban->getUserId())) === null) {
+            $player->sendMessage("Could not find user for ban entry $ban");
+            return;
+        }
+        $content = "";
+        $content .= "Username: " . $user->getRealUsername();
+        if ($user->getRealUsername() !== $user->getDisplayName()) $content .= TextFormat::EOL . TextFormat::RESET . "Nickname: " . $user->getDisplayName();
+        $content .= TextFormat::EOL . TextFormat::RESET . "Reason: " . $ban->getReason();
+        $content .= TextFormat::EOL . TextFormat::RESET . "Since: " . strftime("%c", $ban->getSince());
+        $content .= TextFormat::EOL . TextFormat::RESET . "Until: " . strftime("%c", $ban->getUntil());
+        $content .= TextFormat::EOL . TextFormat::RESET . "Expires: " . ($ban->expires ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        if ($ban->expires) $content .= TextFormat::EOL . TextFormat::RESET . "Has Expired: " . ($ban->hasExpired() ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "Name ban: " . ($ban->isTypeBanned(Ban::TYPE_NAME) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "IP ban: " . ($ban->isTypeBanned(Ban::TYPE_IP) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "UUID ban: " . ($ban->isTypeBanned(Ban::TYPE_UUID) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "XUID ban: " . ($ban->isTypeBanned(Ban::TYPE_XUID) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $form = new SimpleForm($user->getUsername() . " Ban Information", $content);
+        $form->addButton(new Button("Modify Ban"));
+        $form->addButton(new Button("Delete Ban"));
+        $form->addButton(new Button("Back"));
+        $form->setCallable(function (Player $player, string $data) use ($form, $previousForm, $user): void {
+            if ($data === "Back") {
+                if ($previousForm) $player->sendForm($previousForm);
+            } else if ($data === "Modify Ban") {
+                //TODO API::openManageBanUI($player, $user, $form);
+            } else $player->sendForm($form);
+        });
+        $player->sendForm($form);
+    }
+
+    /**
+     * TODO
+     * @param Player $player
+     * @param User $user
+     * @param Form|null $previousForm
+     * @throws InvalidArgumentException
+     */
+    public static function openBanCreateUI(Player $player, User $user, ?Form $previousForm = null): void
+    {
+        $form = new CustomForm("Ban " . $user->getRealUsername());
+        $form->addElement(new Input("Reason", "Reason", "§l§cYou have been banned!"));
+        $form->addElement(new Toggle("Expires", true));
+        $form->addElement(new Input("Until", "Example: 1 day 2 hours 5 minutes", "1 day"));
+        $form->addElement(new Toggle("Name ban", true));
+        $form->addElement(new Toggle("IP ban", true));
+        $form->addElement(new Toggle("UUID ban", true));
+        $form->addElement(new Toggle("XUID ban", true));
+        $form->setCallable(function (Player $player, array $data) use ($form, $previousForm, $user): void {
+            [$reason, $expires, $until, $type_name, $type_ip, $type_uuid, $type_xuid] = $data;
+            $untilTime = time();
+            if ($expires) {
+                //TODO better time check here
+                $untilTime = strtotime($until);
+                if ($untilTime === false) {
+                    $player->sendMessage('"' . $until . '" could not be converted to time');//TODO show form with error
+                    return;
+                }
+            }
+            $types = "";
+            if ($type_name) $types .= Ban::TYPE_NAME;
+            if ($type_ip) $types .= Ban::TYPE_IP;
+            if ($type_uuid) $types .= Ban::TYPE_UUID;
+            if ($type_xuid) $types .= Ban::TYPE_XUID;
+            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types);
+            API::openBanEntryUI($player, $ban, $form);
+        });
+        $form->setCallableClose(function (Player $player) use ($previousForm): void {
+            if ($previousForm) $player->sendForm($previousForm);
+        });
+        $player->sendForm($form);
     }
 }

@@ -12,6 +12,8 @@ use pocketmine\utils\Config;
 use poggit\libasynql\DataConnector;
 use poggit\libasynql\libasynql;
 use poggit\libasynql\SqlError;
+use xenialdan\UserManager\commands\BanCommand;
+use xenialdan\UserManager\commands\BanlistCommand;
 use xenialdan\UserManager\commands\BlockCommand;
 use xenialdan\UserManager\commands\FriendCommand;
 use xenialdan\UserManager\commands\UnblockCommand;
@@ -53,11 +55,23 @@ class Loader extends PluginBase
     {
         self::$instance = $this;
         $this->saveDefaultConfig();
+        //Remove default commands
+        foreach (["ban", "ban-ip", "banlist", "pardon", "pardon-ip"] as $commandName) {
+            $command = $this->getServer()->getCommandMap()->getCommand($commandName);
+            if ($command !== null) {
+                $this->getServer()->getCommandMap()->unregister($command);
+                $this->getLogger()->debug("Unregistered default command $commandName");
+            } else {
+                $this->getLogger()->warning("Could not unregister default command $commandName");
+            }
+        }
         $this->getServer()->getCommandMap()->registerAll("UserManager", [
             new UserManagerCommand("usermanager", "UserManager help", ["um"]),
             new FriendCommand("friend", "Open friend list or manage friends"),
             new BlockCommand("block", "Block users"),
             new UnblockCommand("unblock", "Unblock users"),
+            new BanCommand("ban", "%pocketmine.command.ban.player.description"),
+            new BanlistCommand("banlist", "%pocketmine.command.banlist.description"),
         ]);
     }
 

@@ -35,10 +35,17 @@ class BanStore
         return self::$bans->toArray();
     }
 
-    public static function addBan(Ban $ban): void
+    private static function addBan(Ban $ban): void
     {
         self::$bans->put($ban->getUserId(), $ban);
         Loader::getInstance()->getLogger()->debug("Added ban $ban");
+    }
+
+    public static function createBan(Ban $ban): void
+    {
+        Loader::$queries->addBan($ban, function (int $insertId, int $affectedRows) use ($ban): void {
+            self::addBan($ban);
+        });
     }
 
     public static function getBan(?Player $player): ?Ban
