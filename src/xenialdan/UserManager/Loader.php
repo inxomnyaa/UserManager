@@ -22,6 +22,7 @@ use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\listener\ChatListener;
 use xenialdan\UserManager\listener\GenericEventListener;
 use xenialdan\UserManager\listener\SettingsListener;
+use xenialdan\UserManager\models\Party;
 use xenialdan\UserManager\models\Translations;
 
 class Loader extends PluginBase
@@ -94,6 +95,8 @@ class Loader extends PluginBase
         UserStore::init();
         //Ban store
         BanStore::init();
+        //Parties
+        Party::init();
         //events
         $this->getServer()->getPluginManager()->registerEvents(new GenericEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
