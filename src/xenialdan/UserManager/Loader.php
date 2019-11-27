@@ -15,6 +15,7 @@ use poggit\libasynql\SqlError;
 use xenialdan\UserManager\commands\admin\BanCommand;
 use xenialdan\UserManager\commands\admin\BanlistCommand;
 use xenialdan\UserManager\commands\friend\FriendCommand;
+use xenialdan\UserManager\commands\party\PartyCommand;
 use xenialdan\UserManager\commands\user\BlockCommand;
 use xenialdan\UserManager\commands\user\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
@@ -73,6 +74,7 @@ class Loader extends PluginBase
             new UnblockCommand("unblock", "Unblock users"),
             new BanCommand("ban", "%pocketmine.command.ban.player.description"),
             new BanlistCommand("banlist", "%pocketmine.command.banlist.description"),
+            new PartyCommand("party", "Create parties or manage party members"),
         ]);
     }
 

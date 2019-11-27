@@ -382,7 +382,7 @@ class API
      */
     public static function openUserNotFoundUI(Player $player, string $name, ?Form $previousForm = null): void
     {
-        $form = new ModalForm("Friend Manager - Error", "User " . $name . " not found!", "Back", "Cancel");
+        $form = new ModalForm("Friend Manager - Error", TextFormat::RED . "User " . $name . " not found!", "Back", "Cancel");
         $form->setCallable(function (Player $player, bool $data) use ($previousForm): void {
             if ($data) {
                 if ($previousForm) $player->sendForm($previousForm);
