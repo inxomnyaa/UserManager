@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace xenialdan\UserManager\commands;
+namespace xenialdan\UserManager\commands\friend;
 
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\RawStringArgument;

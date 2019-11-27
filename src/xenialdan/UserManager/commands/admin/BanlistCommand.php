@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace xenialdan\UserManager\commands;
+namespace xenialdan\UserManager\commands\admin;
 
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\RawStringArgument;
@@ -15,7 +15,7 @@ use xenialdan\UserManager\API;
 use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
 
-class BlockCommand extends BaseCommand
+class BanlistCommand extends BaseCommand
 {
 
     /**
@@ -24,7 +24,7 @@ class BlockCommand extends BaseCommand
      */
     protected function prepare(): void
     {
-        $this->setPermission("usermanager.block");
+        $this->setPermission("usermanager.banlist");
         $this->registerArgument(0, new RawStringArgument("Player", true));
     }
 
@@ -38,15 +38,15 @@ class BlockCommand extends BaseCommand
     {
         /** @var Player $sender */
         if (empty($args))
-            API::openBlockedListUI($sender);//TODO
+            API::openBannedListUI($sender);//TODO
         else {
             $name = trim($args["Player"] ?? "");
             if (empty($name)) {
                 $sender->sendMessage("Invalid name given");
                 return;
             }
-            if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
-                API::openBlockUserUI($sender, $friend);
+            if (($bannedUser = (UserStore::getUserByName($name))) instanceof User && $bannedUser->getUsername() !== $sender->getLowerCaseName()) {
+                API::openBanEntryUI($sender, $bannedUser);
             } else {
                 API::openUserNotFoundUI($sender, $name);
             }

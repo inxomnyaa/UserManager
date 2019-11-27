@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace xenialdan\UserManager\commands;
+namespace xenialdan\UserManager\commands\admin;
 
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\BaseSubCommand;

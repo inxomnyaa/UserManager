@@ -9,6 +9,8 @@ use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\exception\SubCommandCollision;
 use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat as TF;
+use xenialdan\UserManager\commands\admin\ListUserCommand;
+use xenialdan\UserManager\commands\admin\VersionCommand;
 
 class UserManagerCommand extends BaseCommand
 {

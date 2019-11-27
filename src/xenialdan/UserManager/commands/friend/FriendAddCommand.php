@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace xenialdan\UserManager\commands;
+namespace xenialdan\UserManager\commands\friend;
 
 use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\RawStringArgument;
@@ -14,7 +14,7 @@ use xenialdan\UserManager\API;
 use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
 
-class FriendAcceptCommand extends BaseSubCommand
+class FriendAddCommand extends BaseSubCommand
 {
 
     /**
@@ -23,7 +23,7 @@ class FriendAcceptCommand extends BaseSubCommand
      */
     protected function prepare(): void
     {
-        $this->setPermission("usermanager.friend.accept");
+        $this->setPermission("usermanager.friend.add");
         $this->registerArgument(0, new RawStringArgument("Player"));
     }
 
@@ -46,7 +46,7 @@ class FriendAcceptCommand extends BaseSubCommand
             return;
         }
         if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
-            API::acceptFriendRequest($sender, $friend);
+            API::openFriendConfirmUI($sender, $friend);
         } else {
             API::openUserNotFoundUI($sender, $name);
         }
