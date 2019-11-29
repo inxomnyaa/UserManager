@@ -31,7 +31,8 @@ class PartyCommand extends BaseCommand
         $this->registerSubCommand(new PartyJoinCommand("join", "Request joining a player's party"));
         $this->registerSubCommand(new PartyRenameCommand("rename", "Rename your party"));
         $this->registerSubCommand(new PartyMembersCommand("members", "List members of the party"));
-        #$this->registerSubCommand(new PartyInfoCommand("info", "List information about the current or a player's party"));
+        $this->registerSubCommand(new PartyInfoCommand("info", "List information about the current or a player's party"));
+        $this->registerSubCommand(new PartySetOwnerCommand("setowner", "Make a party member the owner of the party"));
     }
 
     /**
