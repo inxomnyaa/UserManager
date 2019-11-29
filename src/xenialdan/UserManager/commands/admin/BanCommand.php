@@ -8,7 +8,10 @@ use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\BaseCommand;
 use InvalidArgumentException;
 use pocketmine\command\CommandSender;
+use pocketmine\form\Form;
+use pocketmine\Player;
 use xenialdan\UserManager\API;
+use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
 
 class BanCommand extends BaseCommand
@@ -38,7 +41,7 @@ class BanCommand extends BaseCommand
         API::openUserSearchUI(
             $sender,
             "Ban Manager - Search",
-            function ($player, $user, $form): void {
+            function (Player $player,User $user,Form $form): void {
                 API::openBanCreateUI($player, $user, $form);
             }
         );

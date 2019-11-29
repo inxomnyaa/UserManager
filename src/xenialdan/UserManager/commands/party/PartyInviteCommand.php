@@ -10,6 +10,8 @@ use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use InvalidArgumentException;
 use pocketmine\command\CommandSender;
+use pocketmine\form\Form;
+use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 use xenialdan\UserManager\API;
 use xenialdan\UserManager\models\Party;
@@ -51,10 +53,14 @@ class PartyInviteCommand extends BaseSubCommand
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
             return;
         }
-        if (!isset($args["Player"])) {
+        if (empty($args["Player"]??null)) {
             API::openUserSearchUI($sender, "Party Invite - User",
-                function ($player, $user, $form) use ($party): void {
-                    self::invite($party, $user);
+                function (Player $player, User $invitedUser, Form $form) use ($party): void {
+                    if (!$invitedUser->isOnline()) {
+                        $player->sendMessage(TextFormat::RED . "This user is not online");
+                        return;
+                    }
+                    self::invite($party, $invitedUser);
                 });
             return;
         }
@@ -63,8 +69,8 @@ class PartyInviteCommand extends BaseSubCommand
             $sender->sendMessage("Invalid name given");
             return;
         }
-        if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getUsername() !== $sender->getLowerCaseName()) {
-            self::invite($party, $user);
+        if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getId() !== $user->getId()) {
+            self::invite($party, $friend);
         } else {
             API::openUserNotFoundUI($sender, $name);
         }
@@ -78,6 +84,10 @@ class PartyInviteCommand extends BaseSubCommand
     {
         if ($party->isInvited($user)) {
             $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . $user->getDisplayName() . " already has been invited to the party!");
+            return;
+        }
+        if ($party->isMember($user)) {
+            $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . $user->getDisplayName() . " is already a member of the party!");
             return;
         }
         $party->inviteMember($user);

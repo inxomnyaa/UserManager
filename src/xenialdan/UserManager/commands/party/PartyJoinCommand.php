@@ -41,7 +41,12 @@ class PartyJoinCommand extends BaseSubCommand
             $sender->sendMessage("DEBUG: null");
             return;
         }
-        $find = UserStore::getUserByName(($name = (string)$args["Player"]));
+        $name = trim($args["Player"] ?? "");
+        if (empty($name)) {
+            $sender->sendMessage("Invalid name given");
+            return;
+        }
+        $find = UserStore::getUserByName($name);
         if (!$find instanceof User) {
             $sender->sendMessage("No user with the name $name found");
             return;
@@ -68,6 +73,10 @@ class PartyJoinCommand extends BaseSubCommand
     {
         if ($party->isRequested($user)) {
             $user->getPlayer()->sendMessage(TextFormat::RED . "You have already asked to join the party!");
+            return;
+        }
+        if ($party->isMember($user)) {
+            $user->getPlayer()->sendMessage(TextFormat::RED . "You are already member of the party!");
             return;
         }
         $party->requestMember($user);

@@ -182,7 +182,7 @@ class Party
         });
         if ($filter->isEmpty()) return;
         $this->invites->remove($filter->keys()->first());
-        $this->addMember($filter->keys()->first());
+        $this->addMember($filter->values()->first());
         $this->cleanupExpired();
     }
 
@@ -200,7 +200,7 @@ class Party
      * @param User $user
      * @return Party[]
      */
-    public function getInvitedParties(User $user): array
+    public static function getInvitedParties(User $user): array
     {
         $parties = [];
         foreach (self::$parties as $party) {
@@ -213,7 +213,7 @@ class Party
      * @param User $user
      * @return Party[]
      */
-    public function getRequestedParties(User $user): array
+    public static function getRequestedParties(User $user): array
     {
         $parties = [];
         foreach (self::$parties as $party) {
@@ -260,7 +260,7 @@ class Party
         });
         if ($filter->isEmpty()) return;
         $this->requests->remove($filter->keys()->first());
-        $this->addMember($filter->keys()->first());
+        $this->addMember($filter->values()->first());
         $this->cleanupExpired();
     }
 

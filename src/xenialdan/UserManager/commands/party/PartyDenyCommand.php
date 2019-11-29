@@ -45,13 +45,13 @@ class PartyDenyCommand extends BaseSubCommand
         $party = Party::getParty($user);
         if (!$party instanceof Party) {
             $form = new SimpleForm("Party Requests", "Parties that want you to join");
-            foreach ($party->getInvitedParties() as $party) {
-                $form->addButton(new Button($party->getOwner()->getDisplayName()));
+            foreach (Party::getInvitedParties($user) as $party) {
+                $form->addButton(new Button($party->getOwner()->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
-            $form->setCallable(function (Player $player, array $data) use ($form, $user): void {
+            $form->setCallable(function (Player $player, string $data) use ($form, $user): void {
                 if ($data === "Back") return;
-                if (($party = (Party::getParty(UserStore::getUserByName($data[0])))) instanceof Party) {
+                if (($party = (Party::getParty(UserStore::getUserByName($data)))) instanceof Party) {
                     self::rejectParty($party, $user);
                 }
             });
@@ -67,9 +67,9 @@ class PartyDenyCommand extends BaseSubCommand
                 if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
-            $form->setCallable(function (Player $player, array $data) use ($form, $party): void {
+            $form->setCallable(function (Player $player, string $data) use ($form,$party): void {
                 if ($data === "Back") return;
-                if (($userByName = (UserStore::getUserByName($data[0]))) instanceof User) {
+                if (($userByName = (UserStore::getUserByName($data))) instanceof User) {
                     self::denyPlayer($party, $userByName);
                 }
             });
