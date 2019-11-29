@@ -41,7 +41,7 @@ class BanCommand extends BaseCommand
         API::openUserSearchUI(
             $sender,
             "Ban Manager - Search",
-            function (Player $player,User $user,Form $form): void {
+            function (Player $player, User $user, Form $form): void {
                 API::openBanCreateUI($player, $user, $form);
             }
         );

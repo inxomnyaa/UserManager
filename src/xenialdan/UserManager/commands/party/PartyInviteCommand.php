@@ -53,7 +53,7 @@ class PartyInviteCommand extends BaseSubCommand
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
             return;
         }
-        if (empty($args["Player"]??null)) {
+        if (empty($args["Player"] ?? null)) {
             API::openUserSearchUI($sender, "Party Invite - User",
                 function (Player $player, User $invitedUser, Form $form) use ($party): void {
                     if (!$invitedUser->isOnline()) {

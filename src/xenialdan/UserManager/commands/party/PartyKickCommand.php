@@ -88,7 +88,7 @@ class PartyKickCommand extends BaseSubCommand
      */
     private static function kick(Party $party, User $user): void
     {
-        if($party->getOwnerId() === $user->getId()){
+        if ($party->getOwnerId() === $user->getId()) {
             $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . "You can not kick yourself!");
             return;
         }

@@ -207,7 +207,7 @@ class API
                     API::openUserSearchUI(
                         $player,
                         "Friend Manager - Search",
-                        function (Player $player,User $user,Form $form): void {
+                        function (Player $player, User $user, Form $form): void {
                             API::openUserUI($player, $user, $form);
                         }
                     );

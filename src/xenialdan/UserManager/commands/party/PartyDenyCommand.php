@@ -67,7 +67,7 @@ class PartyDenyCommand extends BaseSubCommand
                 if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
-            $form->setCallable(function (Player $player, string $data) use ($form,$party): void {
+            $form->setCallable(function (Player $player, string $data) use ($form, $party): void {
                 if ($data === "Back") return;
                 if (($userByName = (UserStore::getUserByName($data))) instanceof User) {
                     self::denyPlayer($party, $userByName);
