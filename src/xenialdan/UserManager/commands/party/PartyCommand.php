@@ -10,6 +10,8 @@ use CortexPE\Commando\exception\SubCommandCollision;
 use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
+use xenialdan\customui\elements\Button;
+use xenialdan\customui\windows\SimpleForm;
 
 class PartyCommand extends BaseCommand
 {
@@ -44,7 +46,16 @@ class PartyCommand extends BaseCommand
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
         /** @var Player $sender */
-        #if (empty($args))
-        #API::openPartyUI($sender);
+        if (empty($args)) {
+            //TODO custom entries and responses
+            $form = new SimpleForm("Party Options");
+            foreach ($this->getSubCommands() as $subCommand) {
+                $form->addButton(new Button(ucfirst($subCommand->getName())));
+            }
+            $form->setCallable(function (Player $player, string $data) use ($form): void {
+                $player->getServer()->dispatchCommand($player, "party " . strtolower($data));
+            });
+            $sender->sendForm($form);
+        }
     }
 }

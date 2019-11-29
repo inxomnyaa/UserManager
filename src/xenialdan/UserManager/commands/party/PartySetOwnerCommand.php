@@ -51,9 +51,9 @@ class PartySetOwnerCommand extends BaseSubCommand
             return;
         }
 
-        $form = new SimpleForm("Set Party owner", "Change the owner of the party. Select a party member");
+        $form = new SimpleForm("Set Party owner", "Select a party member to change the owner of the party");
         foreach ($party->getMembers() as $member) {
-            if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getUsername()));//TODO head image
+            if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getRealUsername()));//TODO head image
         }
         $form->setCallable(function (Player $player, string $data) use ($party): void {
             $newOwner = UserStore::getUserByName($data);
