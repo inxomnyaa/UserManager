@@ -1,8 +1,10 @@
-User management (Look at hive - they are similar to your old code)
+# User management (Look at hive - they are similar to your old code)
 - [x] friends
 - [x] add friends
 - [x] friend list, information
-- [ ] party? /party invite etc
+- [x] party? /party invite etc
+- [ ] party functionality + events
+- [ ] party chat
 - [ ] message friends privately / when offline
 - [ ] get notifications when joining / receiving a message
 - [x] ban users and manage bans
@@ -12,13 +14,20 @@ User management (Look at hive - they are similar to your old code)
 - [ ] moderator tools
 - [ ] warnings and warn point system
 - [ ] predefined warns / warn templates
-- [ ] books containing information about warns?
 - [ ] "memories" book?
 - [ ] most online time / last login?
 - [ ] ban evasion detection
 - [ ] report system
 - [x] user server settings
 - [x] user cosmetic settings (i.e. nickname on server)
-
-Party:
-- Commands: invite, kick, leave, delete, create, accept, deny, join, rename
+- [ ] player visibility settings (friends, all, nearby, party)
+## Bugs
+- [ ] user display name does not show for joining players
+## Party
+- [x] Commands: invite, kick, leave, delete, create, accept, deny, join, rename
+- [ ] Group joining in games (gameapi)
+- [ ] Disconnected players get removed
+- [ ] Party chat
+- [ ] Party nametag & chat prefix
+- [ ] Party chat color?
+- [ ] Show only party members
