@@ -165,8 +165,14 @@ class User
             var_dump(__METHOD__, "Changed $affectedRows rows");
         });
         $name = $settings->u_nickname;
-        if (!empty(trim(TextFormat::clean($name)))) $this->getPlayer()->setDisplayName($name);//TODO cleanup
-        else $this->getPlayer()->setDisplayName($this->getPlayer()->getName());
+        //TODO cleanup
+        if (!empty(trim(TextFormat::clean($name)))) {
+            $this->getPlayer()->setDisplayName($name);
+            $this->getPlayer()->setNameTag($name);
+        } else {
+            $this->getPlayer()->setDisplayName($this->getPlayer()->getName());
+            $this->getPlayer()->setNameTag($this->getPlayer()->getName());
+        }
     }
 
     public function __toString(): string
