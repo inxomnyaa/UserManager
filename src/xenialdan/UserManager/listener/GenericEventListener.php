@@ -5,12 +5,14 @@ namespace xenialdan\UserManager\listener;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\utils\TextFormat;
 use ReflectionException;
 use RuntimeException;
 use xenialdan\UserManager\BanStore;
+use xenialdan\UserManager\event\UserDisconnectEvent;
 use xenialdan\UserManager\event\UserLoginEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\models\Ban;
@@ -22,6 +24,7 @@ class GenericEventListener implements Listener
     private static $clientData = [];
 
     /**
+     * @priority HIGHEST
      * @param DataPacketReceiveEvent $event
      */
     public function onPacket(DataPacketReceiveEvent $event)
@@ -42,7 +45,7 @@ class GenericEventListener implements Listener
     }
 
     /**
-     * TODO handle ban
+     * @priority HIGHEST
      * @param PlayerPreLoginEvent $event
      */
     public function onConnect(PlayerPreLoginEvent $event)
@@ -80,21 +83,34 @@ class GenericEventListener implements Listener
                 return;
             }
             $user->setClientData(self::$clientData[$event->getPlayer()->getUniqueId()->toString()] ?? null);
-            $event->getPlayer()->setDisplayName($user->getDisplayName());
+            $user->setDisplayName($user->getDisplayName());
         }
     }
 
     /**
+     * @priority HIGHEST
      * @param PlayerJoinEvent $event
      * @throws ReflectionException
      * @throws RuntimeException
      */
     public function onJoin(PlayerJoinEvent $event): void
     {
-        var_dump(__METHOD__);
         if (($user = UserStore::getUser($event->getPlayer())) instanceof User) {
-            var_dump($user);
             $ev = new UserLoginEvent($user);
+            $ev->call();
+        }
+    }
+
+    /**
+     * @priority HIGHEST
+     * @param PlayerQuitEvent $event
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function onLeave(PlayerQuitEvent $event): void
+    {
+        if (($user = UserStore::getUser($event->getPlayer())) instanceof User) {
+            $ev = new UserDisconnectEvent($user, $event->getQuitMessage(), $event->getQuitReason());
             $ev->call();
         }
     }

@@ -91,7 +91,7 @@ class User
      */
     public function getDisplayName(): string
     {
-        if ($this->settings instanceof UserSettings && !empty(trim(TextFormat::clean($this->settings->u_nickname))))
+        if ($this->settings instanceof UserSettings && self::isValidUserName($this->settings->u_nickname))
             return $this->settings->u_nickname;
         if ($this->isOnline())
             return $this->getPlayer()->getDisplayName();
@@ -166,13 +166,20 @@ class User
         });
         $name = $settings->u_nickname;
         //TODO cleanup
-        if (!empty(trim(TextFormat::clean($name)))) {
-            $this->getPlayer()->setDisplayName($name);
-            $this->getPlayer()->setNameTag($name);
+        if (self::isValidUserName($name)) {
+            $this->setDisplayName($name);
         } else {
-            $this->getPlayer()->setDisplayName($this->getPlayer()->getName());
-            $this->getPlayer()->setNameTag($this->getPlayer()->getName());
+            $this->setDisplayName($this->getRealUsername());
         }
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setDisplayName(string $name): void
+    {
+        $this->getPlayer()->setDisplayName($name);
+        $this->getPlayer()->setNameTag($name);
     }
 
     public function __toString(): string
