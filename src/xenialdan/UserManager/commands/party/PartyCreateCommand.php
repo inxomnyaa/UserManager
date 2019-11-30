@@ -8,10 +8,11 @@ use CortexPE\Commando\args\BaseArgument;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
-use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat;
+use xenialdan\UserManager\event\PartyCreateEvent;
 use xenialdan\UserManager\models\Party;
+use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
 
 class PartyCreateCommand extends BaseSubCommand
@@ -31,7 +32,6 @@ class PartyCreateCommand extends BaseSubCommand
      * @param CommandSender $sender
      * @param string $aliasUsed
      * @param BaseArgument[] $args
-     * @throws InvalidArgumentException
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
@@ -45,8 +45,19 @@ class PartyCreateCommand extends BaseSubCommand
             return;
         }
         $party = new Party($user);
-        if (!empty(TextFormat::clean($name = trim($args["Name"] ?? "")))) $party->setName($name);
-        Party::addParty($party);
-        $user->getPlayer()->sendMessage('The party "' . $party . '" has been created!');
+        if (User::isValidUserName($name = (string)$args["Name"] ?? "")) {//Yes, i honestly abuse this method here. Party names are just like player names
+            $party->setName(User::cleanUserName($name));
+        } else
+            $user->getPlayer()->sendMessage("Invalid name given, using default. The party name must consist out of 1 - 16 of the following symbols: A-Z a-z 0-9 _ and space");
+        try {
+            ($ev = new PartyCreateEvent($party, $user))->call();
+            if (!$ev->isCancelled()) {
+                Party::addParty($ev->getParty());
+                $user->getPlayer()->sendMessage('The party "' . $ev->getParty()->getName() . '" has been created!');
+            } else {
+                $user->getPlayer()->sendMessage('The party "' . $ev->getParty()->getName() . '" could not be created!');
+            }
+        } catch (\Exception $e) {
+        }
     }
 }

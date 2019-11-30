@@ -13,6 +13,7 @@ use pocketmine\utils\TextFormat;
 use xenialdan\customui\elements\Button;
 use xenialdan\customui\windows\ModalForm;
 use xenialdan\customui\windows\SimpleForm;
+use xenialdan\UserManager\event\PartySetOwnerEvent;
 use xenialdan\UserManager\models\Party;
 use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
@@ -82,12 +83,20 @@ class PartySetOwnerCommand extends BaseSubCommand
             $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . $user->getDisplayName() . " already is the owner of the party!");
             return;
         }
-        $oldOwner = $party->getOwner();
-        $party->setOwnerId($user->getId());
-        $oldOwner->getPlayer()->sendMessage(TextFormat::GOLD . "The new owner of the party now is " . $user->getDisplayName() . "!");
-        $user->getPlayer()->sendMessage(TextFormat::GOLD . "You are now the owner of the party \"" . $party->getName() . "\"!");
-        foreach ($party->getMembers() as $member) {
-            $member->getPlayer()->sendMessage(TextFormat::GOLD . $oldOwner->getDisplayName() . " changed the party owner. " . $user->getDisplayName() . " now is the owner of the party!");
+
+        try {
+            ($ev = new PartySetOwnerEvent($party, $user))->call();
+            if (!$ev->isCancelled()) {
+                $party->getOwner()->getPlayer()->sendMessage(TextFormat::GOLD . "The new owner of the party now is " . $ev->getNewOwner()->getDisplayName() . "!");
+                $ev->getNewOwner()->getPlayer()->sendMessage(TextFormat::GOLD . "You are now the owner of the party \"" . $party->getName() . "\"!");
+                foreach ($party->getMembers() as $member) {
+                    $member->getPlayer()->sendMessage(TextFormat::GOLD . $ev->getOwner()->getDisplayName() . " changed the party owner. " . $ev->getNewOwner()->getDisplayName() . " now is the owner of the party!");
+                }
+                $party->setOwnerId($ev->getNewOwner()->getId());
+            } else {
+                $user->getPlayer()->sendMessage(TextFormat::AQUA . "The new owner of the party was not set");
+            }
+        } catch (\Exception $e) {
         }
     }
 }

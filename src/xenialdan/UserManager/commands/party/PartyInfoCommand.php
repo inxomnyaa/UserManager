@@ -52,11 +52,12 @@ class PartyInfoCommand extends BaseSubCommand
                 return;
             }
         } else {
-            $name = trim($args["Player"] ?? "");
-            if (empty($name)) {
+            $name = $args["Player"] ?? null;
+            if (!User::isValidUserName($name)) {
                 $sender->sendMessage("Invalid name given");
                 return;
             }
+            $name = User::cleanUserName((string)$name);
             if (($friend = (UserStore::getUserByName($name))) instanceof User) {
                 $party = Party::getParty($friend);
                 if (!$party instanceof Party) {

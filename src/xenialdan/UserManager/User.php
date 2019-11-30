@@ -196,4 +196,47 @@ class User
     {
         $this->clientData = $clientData;
     }
+
+    /**
+     * Validates the given username.
+     * @param null|string $name
+     * @return bool
+     */
+    public static function isValidUserName(?string $name): bool
+    {
+        if ($name === null) {
+            return false;
+        }
+        return Player::isValidUserName(self::cleanUserName($name));
+    }
+
+    /**
+     * Cleans the given username.
+     * @param string $name
+     * @return string
+     */
+    public static function cleanUserName(string $name): string
+    {
+        return TextFormat::clean(trim($name));
+    }
+
+    /**
+     * Check if this user matches another user
+     * @param User $user
+     * @return bool
+     */
+    public function equals(User $user): bool
+    {
+        return $this->getUserId() === $user->getUserId();
+    }
+
+    /**
+     * Check if this user's id matches another user's id
+     * @param int $userId
+     * @return bool
+     */
+    public function equalsId(int $userId): bool
+    {
+        return $this->getUserId() === $userId;
+    }
 }

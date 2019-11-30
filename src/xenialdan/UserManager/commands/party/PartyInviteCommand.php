@@ -64,11 +64,12 @@ class PartyInviteCommand extends BaseSubCommand
                 });
             return;
         }
-        $name = trim($args["Player"] ?? "");
-        if (empty($name)) {
+        $name = $args["Player"] ?? null;
+        if (!User::isValidUserName($name)) {
             $sender->sendMessage("Invalid name given");
             return;
         }
+        $name = User::cleanUserName((string)$name);
         if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getId() !== $user->getId()) {
             self::invite($party, $friend);
         } else {

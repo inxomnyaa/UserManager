@@ -11,7 +11,9 @@ use CortexPE\Commando\exception\ArgumentOrderException;
 use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat;
+use xenialdan\UserManager\event\PartyRenameEvent;
 use xenialdan\UserManager\models\Party;
+use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
 
 class PartyRenameCommand extends BaseSubCommand
@@ -50,12 +52,20 @@ class PartyRenameCommand extends BaseSubCommand
             return;
         }
 
-        $name = trim(TextFormat::clean($args["Name"] ?? ""));
-        if (empty($name)) {
-            $sender->sendMessage("Invalid name given");
+        if (User::isValidUserName($name = (string)$args["Name"] ?? "")) {//Yes, i honestly abuse this method here. Party names are just like player names
+            try {
+                ($ev = new PartyRenameEvent($party, $user, User::cleanUserName($name)))->call();
+                if (!$ev->isCancelled()) {
+                    $party->setName($ev->getNewName());
+                    $user->getPlayer()->sendMessage(TextFormat::AQUA . "Party name successfully set to " . $party->getName());
+                } else {
+                    $user->getPlayer()->sendMessage(TextFormat::AQUA . "The party name was not set");
+                }
+            } catch (\Exception $e) {
+            }
+        } else {
+            $user->getPlayer()->sendMessage("Invalid name given. The party name must consist out of 1 - 16 of the following symbols: A-Z a-z 0-9 _ and space");
             return;
         }
-        $party->setName($name);
-        $user->getPlayer()->sendMessage(TextFormat::AQUA . "Party name successfully set to " . $party->getName());
     }
 }
