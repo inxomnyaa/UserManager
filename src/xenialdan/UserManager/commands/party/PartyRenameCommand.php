@@ -47,7 +47,7 @@ class PartyRenameCommand extends BaseSubCommand
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are in no party");
             return;
         }
-        if ($party->getOwnerId() !== $user->getId()) {
+        if (!$party->isOwner($user)) {
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
             return;
         }

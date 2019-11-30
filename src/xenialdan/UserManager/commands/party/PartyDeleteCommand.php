@@ -43,7 +43,7 @@ class PartyDeleteCommand extends BaseSubCommand
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are in no party");
             return;
         }
-        if ($party->getOwnerId() !== $user->getId()) {
+        if (!$party->isOwner($user)) {
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
             return;
         }
@@ -65,7 +65,7 @@ class PartyDeleteCommand extends BaseSubCommand
         $party->getOwner()->getPlayer()->sendMessage(TextFormat::AQUA . "You deleted the party \"{$party->getName()}\"!");
         foreach ($party->getMembers() as $member) {
             $member->getPlayer()->sendMessage(TextFormat::GOLD . "The party \"{$party->getName()}\" was deleted by the owner!");
-            #$party->removeMember($member);//TODO check if this is needed
+            #$party->removeMember($member);//TODO check if this is needed - UPDATE 30th 11: Now necessary to call event. Or just call event here
         }
         Party::removeParty($party);
     }

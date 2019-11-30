@@ -47,14 +47,14 @@ class PartySetOwnerCommand extends BaseSubCommand
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are in no party");
             return;
         }
-        if ($party->getOwnerId() !== $user->getId()) {
+        if (!$party->isOwner($user)) {
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
             return;
         }
 
         $form = new SimpleForm("Set Party owner", "Select a party member to change the owner of the party");
         foreach ($party->getMembers() as $member) {
-            if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getRealUsername()));//TODO head image
+            if (!$party->isOwner($member)) $form->addButton(new Button($member->getRealUsername()));//TODO head image
         }
         $form->setCallable(function (Player $player, string $data) use ($party): void {
             $newOwner = UserStore::getUserByName($data);
@@ -79,7 +79,7 @@ class PartySetOwnerCommand extends BaseSubCommand
             $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . "Is not a member of the party!");
             return;
         }
-        if ($party->getOwnerId() === $user->getId()) {
+        if ($party->isOwner($user)) {
             $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . $user->getDisplayName() . " already is the owner of the party!");
             return;
         }

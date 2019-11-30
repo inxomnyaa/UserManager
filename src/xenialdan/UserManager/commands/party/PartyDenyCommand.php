@@ -58,13 +58,13 @@ class PartyDenyCommand extends BaseSubCommand
             $sender->sendForm($form);
             return;
         } else {
-            if ($party->getOwnerId() !== $user->getId()) {
+            if (!$party->isOwner($user)) {
                 $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
                 return;
             }
             $form = new SimpleForm("Party Requests", "Players that want to join the party");
             foreach ($party->getRequests() as $member) {
-                if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getRealUsername()));
+                if (!$party->isOwner($member)) $form->addButton(new Button($member->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
             $form->setCallable(function (Player $player, string $data) use ($form, $party): void {

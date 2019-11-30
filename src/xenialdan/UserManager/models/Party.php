@@ -107,7 +107,7 @@ class Party
             return;
         }
 
-        if ($user->getId() === $this->getOwnerId()) {//Set new owner
+        if ($this->isOwner($user)) {//Set new owner
             $this->setOwnerId((int)$this->members->keys()->first());
             $this->getOwner()->getPlayer()->sendMessage(TextFormat::AQUA . "The party leader left. You are now the party leader!");
             foreach ($this->getMembers() as $member) {
@@ -158,6 +158,15 @@ class Party
     public function getOwner(): ?User
     {
         return UserStore::getUserById($this->ownerId);
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $user->getId() === $this->getOwnerId();
     }
 
     public function inviteMember(User $user): void

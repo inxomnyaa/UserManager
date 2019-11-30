@@ -50,7 +50,7 @@ class PartyKickCommand extends BaseSubCommand
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are in no party");
             return;
         }
-        if ($party->getOwnerId() !== $user->getId()) {
+        if (!$party->isOwner($user)) {
             $user->getPlayer()->sendMessage(TextFormat::RED . "You are not the owner of this party");
             return;
         }
@@ -58,7 +58,7 @@ class PartyKickCommand extends BaseSubCommand
         if (!isset($args["Player"])) {
             $form = new SimpleForm("Kick member", "Kick a party member. The owner can not be kicked");
             foreach ($party->getMembers() as $member) {
-                if ($member->getId() !== $party->getOwnerId()) $form->addButton(new Button($member->getRealUsername()));
+                if (!$party->isOwner($member)) $form->addButton(new Button($member->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
             $form->setCallable(function (Player $player, string $data) use ($form, $party): void {
@@ -89,8 +89,8 @@ class PartyKickCommand extends BaseSubCommand
      */
     private static function kick(Party $party, User $user): void
     {
-        if ($party->getOwnerId() === $user->getId()) {
-            $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . "You can not kick yourself!");
+        if ($party->isOwner($user)) {
+            $party->getOwner()->getPlayer()->sendMessage(TextFormat::RED . "You can not kick the owner of the party!");
             return;
         }
         $user->getPlayer()->sendMessage(TextFormat::RED . "You have been kicked from the party");
