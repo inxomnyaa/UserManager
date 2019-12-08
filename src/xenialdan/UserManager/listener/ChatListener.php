@@ -5,12 +5,12 @@ namespace xenialdan\UserManager\listener;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use xenialdan\UserManager\API;
-use xenialdan\UserManager\event\UserLoginEvent;
+use xenialdan\UserManager\event\UserJoinEvent;
 
 class ChatListener implements Listener
 {
 
-    public function onLogin(UserLoginEvent $event): void
+    public function onJoin(UserJoinEvent $event): void
     {
         $user = $event->getUser();
         API::sendJoinMessages($user->getPlayer());

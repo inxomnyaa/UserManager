@@ -178,8 +178,10 @@ class User
      */
     public function setDisplayName(string $name): void
     {
-        $this->getPlayer()->setDisplayName($name);
-        $this->getPlayer()->setNameTag($name);
+        if ($this->isOnline()) {
+            $this->getPlayer()->setDisplayName($name);
+            $this->getPlayer()->setNameTag($name);
+        }
     }
 
     public function __toString(): string

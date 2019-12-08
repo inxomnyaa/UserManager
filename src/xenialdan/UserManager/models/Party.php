@@ -88,7 +88,7 @@ class Party
      * @param string $name
      * @return Party
      */
-    public function setName(string $name): Party
+    public function setName(string $name = "Party"): Party
     {
         $this->name = $name;
         return $this;

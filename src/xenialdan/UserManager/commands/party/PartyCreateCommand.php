@@ -45,7 +45,7 @@ class PartyCreateCommand extends BaseSubCommand
             return;
         }
         $party = new Party($user);
-        if (User::isValidUserName($name = (string)$args["Name"] ?? "")) {//Yes, i honestly abuse this method here. Party names are just like player names
+        if (User::isValidUserName($name = (string)($args["Name"] ?? ""))) {//Yes, i honestly abuse this method here. Party names are just like player names
             $party->setName(User::cleanUserName($name));
         } else
             $user->getPlayer()->sendMessage("Invalid name given, using default. The party name must consist out of 1 - 16 of the following symbols: A-Z a-z 0-9 _ and space");

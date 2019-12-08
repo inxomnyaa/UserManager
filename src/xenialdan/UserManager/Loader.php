@@ -21,8 +21,8 @@ use xenialdan\UserManager\commands\user\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
 use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\listener\ChatListener;
-use xenialdan\UserManager\listener\GenericEventListener;
 use xenialdan\UserManager\listener\SettingsListener;
+use xenialdan\UserManager\listener\UserBaseEventListener;
 use xenialdan\UserManager\models\Party;
 use xenialdan\UserManager\models\Translations;
 
@@ -100,7 +100,7 @@ class Loader extends PluginBase
         //Parties
         Party::init();
         //events
-        $this->getServer()->getPluginManager()->registerEvents(new GenericEventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new UserBaseEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new ChatListener(), $this);
         //translations

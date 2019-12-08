@@ -4,22 +4,22 @@ namespace xenialdan\UserManager\listener;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\utils\TextFormat;
 use ReflectionException;
 use RuntimeException;
-use xenialdan\UserManager\BanStore;
 use xenialdan\UserManager\event\UserDisconnectEvent;
+use xenialdan\UserManager\event\UserJoinEvent;
 use xenialdan\UserManager\event\UserLoginEvent;
+use xenialdan\UserManager\event\UserPreLoginEvent;
 use xenialdan\UserManager\Loader;
-use xenialdan\UserManager\models\Ban;
 use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
 
-class GenericEventListener implements Listener
+class UserBaseEventListener implements Listener
 {
     private static $clientData = [];
 
@@ -35,6 +35,7 @@ class GenericEventListener implements Listener
     }
 
     /**
+     * @priority HIGHEST
      * @param DataPacketReceiveEvent $event
      */
     private function onLoginPacket(DataPacketReceiveEvent $event)
@@ -45,11 +46,13 @@ class GenericEventListener implements Listener
     }
 
     /**
-     * @priority HIGHEST
+     * @priority HIGH
      * @param PlayerPreLoginEvent $event
+     * @throws RuntimeException
      */
     public function onConnect(PlayerPreLoginEvent $event)
     {
+        var_dump(date("r"), $event->getEventName());
         $player = $event->getPlayer();
         if (!($user = UserStore::getUser($player)) instanceof User) {
             Loader::$queries->getUser($player->getName(), function (array $rows) use ($player): void {
@@ -60,34 +63,35 @@ class GenericEventListener implements Listener
                 }
             });
         } else {
-            /* TODO HANDLE BAN & WARN CHECKS HERE */
-            $ban = BanStore::getBanById($user->getId());
-            if ($ban instanceof Ban) {
-                $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!" . TextFormat::EOL . $ban->reason;
-                $debug = "Banned user tried to log in:" . TextFormat::EOL . $ban;
-                $kick = false;
-                if ($ban->isTypeBanned(Ban::TYPE_IP) && $user->getIP() === $player->getAddress()) {
-                    $kick = true;
-                }
-                if ($ban->isTypeBanned(Ban::TYPE_NAME) && strtolower($user->getUsername()) === $player->getLowerCaseName()) {
-                    $kick = true;
-                }
-                //TODO UUID, XUID
-                if ($kick) {
-                    //TODO check why kick message does not appear + stuck in loading resources
-                    Loader::getInstance()->getLogger()->debug($debug);
-                    $event->setKickMessage($msg);
-                    $event->setCancelled();
-                    $player->kick($msg, false);
-                }
-                return;
-            }
             $user->setClientData(self::$clientData[$event->getPlayer()->getUniqueId()->toString()] ?? null);
-            $user->setDisplayName($user->getDisplayName());
+            $user->setDisplayName(
+                $user->getDisplayName());
+            $ev = new UserPreLoginEvent($user);
+            $ev->call();
         }
     }
 
     /**
+     * TODO user settings (Nickname!) should already be accessible here!
+     * @priority HIGHEST
+     * @param PlayerLoginEvent $event
+     * @throws ReflectionException
+     * @throws RuntimeException
+     */
+    public function onLogin(PlayerLoginEvent $event): void
+    {
+        var_dump(date("r"), $event->getEventName());
+        if (($user = UserStore::getUser($event->getPlayer())) instanceof User) {
+            $user->setDisplayName(
+                $user->getDisplayName());
+            $ev = new UserLoginEvent($user);
+            $ev->call();
+            #var_dump($ev, $event->getPlayer()->isOnline() ? "true" : "false");
+        }
+    }
+
+    /**
+     * TODO user settings (Nickname!) should already be accessible here!
      * @priority HIGHEST
      * @param PlayerJoinEvent $event
      * @throws ReflectionException
@@ -95,9 +99,13 @@ class GenericEventListener implements Listener
      */
     public function onJoin(PlayerJoinEvent $event): void
     {
+        var_dump(date("r"), $event->getEventName());
         if (($user = UserStore::getUser($event->getPlayer())) instanceof User) {
-            $ev = new UserLoginEvent($user);
+            $user->setDisplayName(
+                $user->getDisplayName());
+            $ev = new UserJoinEvent($user);
             $ev->call();
+            #var_dump($ev, $event->getPlayer()->isOnline() ? "true" : "false");
         }
     }
 

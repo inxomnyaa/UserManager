@@ -54,7 +54,7 @@ class UserStore
     public static function addUser(User $user): void
     {
         self::$users->put($user->getIUsername(), $user);
-        Loader::getInstance()->getLogger()->debug("Added user $user");
+        Loader::getInstance()->getLogger()->debug("Added user " . $user->getUsername());
     }
 
     public static function getUser(?Player $player): ?User

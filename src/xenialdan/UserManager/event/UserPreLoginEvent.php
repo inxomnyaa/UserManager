@@ -7,11 +7,11 @@ namespace xenialdan\UserManager\event;
 use pocketmine\event\Cancellable;
 
 /**
- * Class UserLoginEvent
- * Called after the player has successfully authenticated, before it spawns
+ * Class UserPreLoginEvent
+ * Called when a player connects to the server
  *
  * @package xenialdan\UserManager\event
  */
-class UserLoginEvent extends UserEvent implements Cancellable
+class UserPreLoginEvent extends UserEvent implements Cancellable
 {
 }
