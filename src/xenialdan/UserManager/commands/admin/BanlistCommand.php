@@ -43,7 +43,7 @@ class BanlistCommand extends BaseCommand
         if (empty($args))
             API::openBannedListUI($sender);//TODO
         else {
-            $name = trim($args["Player"] ?? "");
+            $name = trim(strval($args["Player"] ?? ""));
             if (empty($name)) {
                 $sender->sendMessage("Invalid name given");
                 return;

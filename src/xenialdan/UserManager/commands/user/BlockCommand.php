@@ -43,7 +43,7 @@ class BlockCommand extends BaseCommand
         if (empty($args))
             API::openBlockedListUI($sender);//TODO
         else {
-            $name = trim($args["Player"] ?? "");
+            $name = trim(strval($args["Player"] ?? ""));
             if (empty($name)) {
                 $sender->sendMessage("Invalid name given");
                 return;

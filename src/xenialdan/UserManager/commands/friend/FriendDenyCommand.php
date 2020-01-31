@@ -45,7 +45,7 @@ class FriendDenyCommand extends BaseSubCommand
             $sender->sendMessage("DEBUG: null");
             return;
         }
-        $name = trim($args["Player"] ?? "");
+        $name = trim(strval($args["Player"] ?? ""));
         if (empty($name)) {
             $sender->sendMessage("Invalid name given");
             return;

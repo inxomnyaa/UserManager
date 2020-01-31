@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace xenialdan\UserManager\listener;
 
+use InvalidArgumentException;
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\form\Form;
@@ -68,6 +69,7 @@ class SettingsListener implements Listener
      * @param DataPacketReceiveEvent $event
      * @return bool
      * @throws LanguageException
+     * @throws InvalidArgumentException
      */
     private function onSettingsRequest(DataPacketReceiveEvent $event): bool
     {
@@ -123,6 +125,9 @@ class SettingsListener implements Listener
                 $this->forms[$this->formId] = $form;
                 $packet = new ServerSettingsResponsePacket();
                 $packet->formData = json_encode($form);
+                if ($packet->formData === false) {
+                    throw new InvalidArgumentException("Failed to encode form JSON: " . json_last_error_msg());
+                }
                 $packet->formId = $this->formId;
                 $player->dataPacket($packet);
 

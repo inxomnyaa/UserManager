@@ -57,7 +57,7 @@ class PartyRenameCommand extends BaseSubCommand
             return;
         }
 
-        if (User::isValidUserName($name = (string)($args["Name"] ?? ""))) {//Yes, i honestly abuse this method here. Party names are just like player names
+        if (User::isValidUserName($name = strval($args["Name"] ?? ""))) {//Yes, i honestly abuse this method here. Party names are just like player names
             try {
                 ($ev = new PartyRenameEvent($party, $user, User::cleanUserName($name)))->call();
                 if (!$ev->isCancelled()) {
