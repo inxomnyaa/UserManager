@@ -49,7 +49,7 @@ class PartyDeleteCommand extends BaseSubCommand
         }
 
         $form = new ModalForm("Delete Party?", "Do you want to delete the party \"{$party->getName()}\"?", "Yes", "No");
-        $form->setCallable(function (Player $player, bool $data) use ($party, $user): void {
+        $form->setCallable(function (Player $player, bool $data) use ($party): void {
             if ($data) {
                 self::delete($party);
             }

@@ -77,7 +77,7 @@ class PartyInfoCommand extends BaseSubCommand
         $form = new SimpleForm("Party info", $content);
         $form->addButton(new Button("Show member info"));
         $form->addButton(new Button("Back"));
-        $form->setCallable(function (Player $player, string $data) use ($form, $party): void {
+        $form->setCallable(function (Player $player, string $data): void {
             if ($data === "Back") return;//TODO
             if ($data === "Show member info") {
                 $player->getServer()->dispatchCommand($player, "party members");

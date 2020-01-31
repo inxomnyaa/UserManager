@@ -61,7 +61,7 @@ class PartyKickCommand extends BaseSubCommand
                 if (!$party->isOwner($member)) $form->addButton(new Button($member->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
-            $form->setCallable(function (Player $player, string $data) use ($form, $party): void {
+            $form->setCallable(function (Player $player, string $data) use ($party): void {
                 if ($data === "Back") return;
                 if (($kickedMember = (UserStore::getUserByName($data))) instanceof User) {
                     self::kick($party, $kickedMember);

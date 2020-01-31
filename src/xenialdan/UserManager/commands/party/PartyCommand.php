@@ -52,7 +52,7 @@ class PartyCommand extends BaseCommand
             foreach ($this->getSubCommands() as $subCommand) {
                 $form->addButton(new Button(ucfirst($subCommand->getName())));
             }
-            $form->setCallable(function (Player $player, string $data) use ($form): void {
+            $form->setCallable(function (Player $player, string $data): void {
                 $player->getServer()->dispatchCommand($player, "party " . strtolower($data));
             });
             $sender->sendForm($form);

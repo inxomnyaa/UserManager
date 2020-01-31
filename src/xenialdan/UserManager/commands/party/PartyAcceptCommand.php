@@ -49,7 +49,7 @@ class PartyAcceptCommand extends BaseSubCommand
                 $form->addButton(new Button($party->getOwner()->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
-            $form->setCallable(function (Player $player, string $data) use ($form, $user): void {
+            $form->setCallable(function (Player $player, string $data) use ($user): void {
                 if ($data === "Back") return;
                 if (($party = (Party::getParty(UserStore::getUserByName($data)))) instanceof Party) {
                     self::acceptParty($party, $user);
@@ -67,7 +67,7 @@ class PartyAcceptCommand extends BaseSubCommand
                 if (!$party->isOwner($member)) $form->addButton(new Button($member->getRealUsername()));
             }
             $form->addButton(new Button("Back"));
-            $form->setCallable(function (Player $player, string $data) use ($form, $party): void {
+            $form->setCallable(function (Player $player, string $data) use ($party): void {
                 if ($data === "Back") return;
                 if (($userByName = (UserStore::getUserByName($data))) instanceof User) {
                     self::acceptPlayer($party, $userByName);

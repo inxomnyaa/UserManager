@@ -647,7 +647,7 @@ class API
         $form->addElement(new Toggle("IP ban", true));
         $form->addElement(new Toggle("UUID ban", true));
         $form->addElement(new Toggle("XUID ban", true));
-        $form->setCallable(function (Player $player, array $data) use ($form, $previousForm, $user): void {
+        $form->setCallable(function (Player $player, array $data) use ($form, $user): void {
             [$reason, $expires, $until, $type_name, $type_ip, $type_uuid, $type_xuid] = $data;
             $untilTime = time();
             if ($expires) {
