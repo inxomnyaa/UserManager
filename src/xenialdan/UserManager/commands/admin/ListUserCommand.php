@@ -38,7 +38,10 @@ class ListUserCommand extends BaseSubCommand
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        /** @var Player $sender */
+        if (!$sender instanceof Player) {
+            $sender->sendMessage("This command is for players only.");
+            return;
+        }
         $users = UserStore::getUsers();
         if (!($args["ui"] ?? false)) {
             $form = new SimpleForm("Registered users");

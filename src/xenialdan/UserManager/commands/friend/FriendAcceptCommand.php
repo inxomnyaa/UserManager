@@ -10,6 +10,7 @@ use CortexPE\Commando\BaseSubCommand;
 use CortexPE\Commando\exception\ArgumentOrderException;
 use InvalidArgumentException;
 use pocketmine\command\CommandSender;
+use pocketmine\Player;
 use xenialdan\UserManager\API;
 use xenialdan\UserManager\User;
 use xenialdan\UserManager\UserStore;
@@ -35,6 +36,10 @@ class FriendAcceptCommand extends BaseSubCommand
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
+        if (!$sender instanceof Player) {
+            $sender->sendMessage("This command is for players only.");
+            return;
+        }
         $user = UserStore::getUser($sender);
         if ($user === null) {
             $sender->sendMessage("DEBUG: null");

@@ -33,6 +33,10 @@ class BanCommand extends BaseCommand
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
+        if (!$sender instanceof Player) {
+            $sender->sendMessage("This command is for players only.");//TODO this needs a change, allow console to ban players
+            return;
+        }
         $user = UserStore::getUser($sender);
         if ($user === null) {
             $sender->sendMessage("DEBUG: null");

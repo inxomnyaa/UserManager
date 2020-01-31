@@ -36,7 +36,10 @@ class BanlistCommand extends BaseCommand
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void
     {
-        /** @var Player $sender */
+        if (!$sender instanceof Player) {
+            $sender->sendMessage("This command is for players only.");
+            return;
+        }
         if (empty($args))
             API::openBannedListUI($sender);//TODO
         else {
