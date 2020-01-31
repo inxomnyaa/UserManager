@@ -50,7 +50,7 @@ class PartyJoinCommand extends BaseSubCommand
             $sender->sendMessage("Invalid name given");
             return;
         }
-        $name = User::cleanUserName((string)$name);
+        $name = User::cleanUserName(strval($name));
         $find = UserStore::getUserByName($name);
         if (!$find instanceof User) {
             $sender->sendMessage("No user with the name $name found");

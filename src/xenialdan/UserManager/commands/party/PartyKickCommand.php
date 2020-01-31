@@ -79,7 +79,7 @@ class PartyKickCommand extends BaseSubCommand
             $sender->sendMessage("Invalid name given");
             return;
         }
-        $name = User::cleanUserName((string)$name);
+        $name = User::cleanUserName(strval($name));
         if (($kickedMember = (UserStore::getUserByName($name))) instanceof User) {
             self::kick($party, $kickedMember);
         } else {

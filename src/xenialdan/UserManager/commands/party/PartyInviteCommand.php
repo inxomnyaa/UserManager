@@ -73,7 +73,7 @@ class PartyInviteCommand extends BaseSubCommand
             $sender->sendMessage("Invalid name given");
             return;
         }
-        $name = User::cleanUserName((string)$name);
+        $name = User::cleanUserName(strval($name));
         if (($friend = (UserStore::getUserByName($name))) instanceof User && $friend->getId() !== $user->getId()) {
             self::invite($party, $friend);
         } else {

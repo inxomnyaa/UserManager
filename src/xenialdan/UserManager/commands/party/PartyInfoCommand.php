@@ -61,7 +61,7 @@ class PartyInfoCommand extends BaseSubCommand
                 $sender->sendMessage("Invalid name given");
                 return;
             }
-            $name = User::cleanUserName((string)$name);
+            $name = User::cleanUserName(strval($name));
             if (($friend = (UserStore::getUserByName($name))) instanceof User) {
                 $party = Party::getParty($friend);
                 if (!$party instanceof Party) {

@@ -55,7 +55,7 @@ class Translations implements Translation
 
     /**
      * Checks against the english translation and dumps missing translation keys
-     * @param string|null $shortName 3 letter format conform with iso639-2
+     * @param string $shortName 3 letter format conform with iso639-2
      * @return bool Returns true when there are missing entries
      */
     public static function languageNeedsUpdate(string $shortName): bool
