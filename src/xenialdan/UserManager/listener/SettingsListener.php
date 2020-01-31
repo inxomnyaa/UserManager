@@ -15,7 +15,7 @@ use pocketmine\Player;
 use xenialdan\customui\elements\Input;
 use xenialdan\customui\elements\Toggle;
 use xenialdan\customui\windows\ServerForm;
-use xenialdan\UserManager\event\UserLoginEvent;
+use xenialdan\UserManager\event\UserJoinEvent;
 use xenialdan\UserManager\event\UserSettingsChangeEvent;
 use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\Loader;
@@ -46,7 +46,7 @@ class SettingsListener implements Listener
         }
     }
 
-    public function onLogin(UserLoginEvent $event): void
+    public function onJoin(UserJoinEvent $event): void
     {
         $user = $event->getUser();
         Loader::$queries->changeUserSettingsLanguage($user->getId(), $user->getPlayer()->getLocale(), function (int $affectedRows) use ($user): void {

@@ -6,6 +6,7 @@ namespace xenialdan\UserManager;
 
 use Ds\Map;
 use pocketmine\Player;
+use xenialdan\UserManager\event\UserBanEvent;
 use xenialdan\UserManager\models\Ban;
 
 class BanStore
@@ -21,7 +22,14 @@ class BanStore
         self::$bans = new Map();
         Loader::$queries->getBanList(function (array $rows): void {
             foreach ($rows as $banData) {
-                self::addBan(new Ban($banData["user_id"], $banData["since"], $banData["until"], $banData["expires"] === 1, $banData["reason"], $banData["types"]));
+                $ban = new Ban($banData["user_id"], $banData["since"], $banData["until"], $banData["expires"] === 1, $banData["reason"], $banData["types"]);
+                if (!$ban->hasExpired())
+                    self::addBan($ban);
+                else {//TODO Remove/cleanup this hack
+                    Loader::$queries->deleteBan($ban, function (int $a): void {
+                        echo $a;
+                    });
+                }
             }
             Loader::getInstance()->getLogger()->info(self::$bans->count() . " ban entries loaded from database");
         });
@@ -43,6 +51,9 @@ class BanStore
 
     public static function createBan(Ban $ban): void
     {
+        $ev = new UserBanEvent(UserStore::getUserById($ban->getUserId()), $ban);
+        $ev->call();
+        if ($ev->isCancelled()) return;
         Loader::$queries->addBan($ban, function (int $insertId, int $affectedRows) use ($ban): void {
             self::addBan($ban);
         });

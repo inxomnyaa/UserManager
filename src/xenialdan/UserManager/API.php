@@ -613,14 +613,18 @@ class API
         $content .= TextFormat::EOL . TextFormat::RESET . "UUID ban: " . ($ban->isTypeBanned(Ban::TYPE_UUID) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
         $content .= TextFormat::EOL . TextFormat::RESET . "XUID ban: " . ($ban->isTypeBanned(Ban::TYPE_XUID) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
         $form = new SimpleForm($user->getUsername() . " Ban Information", $content);
+        $form->addButton(new Button("Confirm Ban"));
         $form->addButton(new Button("Modify Ban"));
         $form->addButton(new Button("Delete Ban"));
         $form->addButton(new Button("Back"));
-        $form->setCallable(function (Player $player, string $data) use ($form, $previousForm, $user): void {
+        $form->setCallable(function (Player $player, string $data) use ($form, $previousForm, $user, $ban): void {
             if ($data === "Back") {
                 if ($previousForm) $player->sendForm($previousForm);
             } else if ($data === "Modify Ban") {
                 //TODO API::openManageBanUI($player, $user, $form);
+            } else if ($data === "Confirm Ban") {
+                BanStore::createBan($ban);
+                $player->sendMessage("Successfully banned " . $user->getRealUsername() . "!");
             } else $player->sendForm($form);
         });
         $player->sendForm($form);

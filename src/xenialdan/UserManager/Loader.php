@@ -20,6 +20,7 @@ use xenialdan\UserManager\commands\user\BlockCommand;
 use xenialdan\UserManager\commands\user\UnblockCommand;
 use xenialdan\UserManager\commands\UserManagerCommand;
 use xenialdan\UserManager\exceptions\LanguageException;
+use xenialdan\UserManager\listener\BanListener;
 use xenialdan\UserManager\listener\ChatListener;
 use xenialdan\UserManager\listener\SettingsListener;
 use xenialdan\UserManager\listener\UserBaseEventListener;
@@ -103,6 +104,7 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new UserBaseEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new SettingsListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new ChatListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new BanListener(), $this);
         //translations
         Translations::init();
         $lang = (string)$this->getConfig()->get("language", BaseLang::FALLBACK_LANGUAGE);

@@ -84,8 +84,10 @@ class UserBaseEventListener implements Listener
         if (($user = UserStore::getUser($event->getPlayer())) instanceof User) {
             $user->setDisplayName(
                 $user->getDisplayName());
-            $ev = new UserLoginEvent($user);
+            $ev = new UserLoginEvent($user, $event->getPlayer());
             $ev->call();
+            $event->setKickMessage($ev->getKickMessage());
+            $event->setCancelled($ev->isCancelled());
             #var_dump($ev, $event->getPlayer()->isOnline() ? "true" : "false");
         }
     }

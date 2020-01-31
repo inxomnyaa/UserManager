@@ -19,6 +19,8 @@ class ChatListener implements Listener
     public function onChat(PlayerChatEvent $event): void
     {
         return;//TODO
+        //TODO if global mute -> cancel, send "u r muted"
+        //TODO if local mute -> filter recipients if they muted
         /*if (($user = UserStore::getUser($player = $event->getPlayer())) instanceof User) {
             $rec = $event->getRecipients();
             $rec = array_filter($rec, function (Player $player): bool {
