@@ -56,7 +56,7 @@ class PartyInfoCommand extends BaseSubCommand
                 return;
             }
         } else {
-            $name = $args["Player"] ?? null;
+            $name = strval($args["Player"]);
             if (!User::isValidUserName($name)) {
                 $sender->sendMessage("Invalid name given");
                 return;

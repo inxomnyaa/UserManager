@@ -12,8 +12,7 @@ use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
-use xenialdan\UserManager\User;
-use xenialdan\UserManager\UserStore;
+use xenialdan\UserManager\BanStore;
 
 class BanlistCommand extends BaseCommand
 {
@@ -48,8 +47,8 @@ class BanlistCommand extends BaseCommand
                 $sender->sendMessage("Invalid name given");
                 return;
             }
-            if (($bannedUser = (UserStore::getUserByName($name))) instanceof User && $bannedUser->getUsername() !== $sender->getLowerCaseName()) {
-                API::openBanEntryUI($sender, $bannedUser);
+            if (($ban = BanStore::getBanByName($name)) instanceof BanStore) {
+                API::openBanEntryUI($sender, $ban);
             } else {
                 API::openUserNotFoundUI($sender, $name);
             }

@@ -74,7 +74,7 @@ class PartyKickCommand extends BaseSubCommand
             $sender->sendForm($form);
             return;
         }
-        $name = $args["Player"] ?? null;
+        $name = strval($args["Player"]);
         if (!User::isValidUserName($name)) {
             $sender->sendMessage("Invalid name given");
             return;
