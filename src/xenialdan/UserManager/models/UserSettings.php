@@ -31,7 +31,7 @@ class UserSettings implements JsonSerializable
     public function __construct(array $data = [])
     {
         if (empty($data)) return;
-        /** @var ReflectionClass $reflectionClass */
+        /** @var ReflectionClass<UserSettings> $reflectionClass */
         $reflectionClass = new ReflectionClass(UserSettings::class);
         foreach ($reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC) as $key => $property) {
             if (isset($data[$key]) || isset($data[$property->getName()])) {

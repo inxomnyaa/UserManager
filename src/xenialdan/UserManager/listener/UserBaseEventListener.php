@@ -21,13 +21,14 @@ use xenialdan\UserManager\UserStore;
 
 class UserBaseEventListener implements Listener
 {
+    /** @var array decoded payload of the clientData JWT */
     private static $clientData = [];
 
     /**
      * @priority HIGHEST
      * @param DataPacketReceiveEvent $event
      */
-    public function onPacket(DataPacketReceiveEvent $event)
+    public function onPacket(DataPacketReceiveEvent $event): void
     {
         if ($event->getPacket()->pid() === LoginPacket::NETWORK_ID) {
             $this->onLoginPacket($event);
@@ -38,7 +39,7 @@ class UserBaseEventListener implements Listener
      * @priority HIGHEST
      * @param DataPacketReceiveEvent $event
      */
-    private function onLoginPacket(DataPacketReceiveEvent $event)
+    private function onLoginPacket(DataPacketReceiveEvent $event): void
     {
         /** @var LoginPacket $pk */
         $pk = $event->getPacket();
@@ -50,7 +51,7 @@ class UserBaseEventListener implements Listener
      * @param PlayerPreLoginEvent $event
      * @throws RuntimeException
      */
-    public function onConnect(PlayerPreLoginEvent $event)
+    public function onConnect(PlayerPreLoginEvent $event): void
     {
         var_dump(date("r"), $event->getEventName());
         $player = $event->getPlayer();

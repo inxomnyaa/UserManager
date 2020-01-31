@@ -10,13 +10,20 @@ use xenialdan\UserManager\models\UserSettings;
 
 class User
 {
-
-    private $id, $username, $ip, $flags = [];
+    /** @var int */
+    private $id;
+    /** @var string */
+    private $username;
+    /** @var string */
+    private $ip;
+    /** @var array */
+    private $flags = [];
     /** @var null|UserSettings */
     private $settings = null;
+    /** @var null|array decoded payload of the clientData JWT */
     private $clientData = null;
 
-    public function __construct($id = -1, string $username, string $ip, array/*PermissionFlags*/
+    public function __construct(int $id = -1, string $username, string $ip, array/*PermissionFlags*/
     $flags = [])
     {
         $this->id = $id;
@@ -44,7 +51,7 @@ class User
     /**
      * @param int $id
      */
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -98,7 +105,7 @@ class User
         return $this->username;
     }
 
-    public function getIP()
+    public function getIP(): string
     {
         return $this->ip;
     }
@@ -106,7 +113,7 @@ class User
     /**
      * @param string $ip
      */
-    public function setIp(string $ip)
+    public function setIp(string $ip): void
     {
         $this->ip = $ip;
     }

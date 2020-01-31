@@ -35,7 +35,7 @@ class SettingsListener implements Listener
      * @param DataPacketReceiveEvent $event
      * @throws LanguageException
      */
-    public function onPacket(DataPacketReceiveEvent $event)
+    public function onPacket(DataPacketReceiveEvent $event): void
     {
         if ($event->getPacket()->pid() === ServerSettingsRequestPacket::NETWORK_ID) {
             $event->setCancelled(!$this->onSettingsRequest($event));

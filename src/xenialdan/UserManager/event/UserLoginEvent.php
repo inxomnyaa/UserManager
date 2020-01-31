@@ -16,6 +16,7 @@ use xenialdan\UserManager\User;
  */
 class UserLoginEvent extends UserEvent implements Cancellable
 {
+    /** @var Player */
     private $player;
     /** @var string */
     protected $kickMessage = "";

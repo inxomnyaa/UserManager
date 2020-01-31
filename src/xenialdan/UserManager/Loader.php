@@ -54,7 +54,7 @@ class Loader extends PluginBase
         return Loader::getInstance()->database;
     }
 
-    public function onLoad()
+    public function onLoad(): void
     {
         self::$instance = $this;
         $this->saveDefaultConfig();
@@ -85,7 +85,7 @@ class Loader extends PluginBase
      * @throws PluginException
      * @throws SqlError
      */
-    public function onEnable()
+    public function onEnable(): void
     {
         $this->saveDefaultConfig();
         $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
@@ -143,7 +143,7 @@ class Loader extends PluginBase
         self::$localeMapping = $mapping;
     }
 
-    public function onDisable()
+    public function onDisable(): void
     {
         if (isset($this->database)) $this->database->close();
     }
