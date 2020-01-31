@@ -22,6 +22,10 @@ jobs:
         uses: wei/wget@v1
         with:
           args: -O vendor/Commando.phar https://poggit.pmmp.io/r/67875/Commando_dev-27.phar
+      - name: wget virions, libasynql
+        uses: wei/wget@v1
+        with:
+          args: -O vendor/libasynql.phar https://poggit.pmmp.io/r/42454/libasynql_dev-99.phar
       - name: Run PHPStan
         uses: nxtlvlsoftware/pmmp-phpstan-action@3
         with:

@@ -13,5 +13,6 @@ parameters:
         - /source/src
         - phar:///source/vendor/customui.phar/src
         - phar:///source/vendor/Commando.phar/src
+        - phar:///source/vendor/libasynql.phar/src
     excludes_analyse:
         - source/vendor
