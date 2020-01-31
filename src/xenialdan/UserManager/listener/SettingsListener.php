@@ -124,10 +124,10 @@ class SettingsListener implements Listener
                 $this->formId++;
                 $this->forms[$this->formId] = $form;
                 $packet = new ServerSettingsResponsePacket();
-                $packet->formData = json_encode($form);
-                if ($packet->formData === false) {
+                if (($formData = json_encode($form)) === false) {
                     throw new InvalidArgumentException("Failed to encode form JSON: " . json_last_error_msg());
                 }
+                $packet->formData = $formData;
                 $packet->formId = $this->formId;
                 $player->dataPacket($packet);
 
