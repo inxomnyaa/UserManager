@@ -13,6 +13,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
 use xenialdan\UserManager\BanStore;
+use xenialdan\UserManager\models\Ban;
 
 class BanlistCommand extends BaseCommand
 {
@@ -47,7 +48,7 @@ class BanlistCommand extends BaseCommand
                 $sender->sendMessage("Invalid name given");
                 return;
             }
-            if (($ban = BanStore::getBanByName($name)) instanceof BanStore) {
+            if (($ban = BanStore::getBanByName($name)) instanceof Ban) {
                 API::openBanEntryUI($sender, $ban);
             } else {
                 API::openUserNotFoundUI($sender, $name);
