@@ -103,7 +103,12 @@ class SettingsListener implements Listener
                 }
                 $form->setCallable(function (Player $player, array $data) use ($user): void {
                     //TODO HACK push language in front. This can be removed when form rewrite adds indexes
-                    array_unshift($data, $user->getSettings()->u_language);
+                    $userSettings = $user->getSettings();
+                    if (!$userSettings instanceof UserSettings) {
+                        Translations::translate("User settings can not be fetched!", [], $user);//TODO translation entry
+                        return;
+                    }
+                    array_unshift($data, $userSettings->u_language);
 
                     $ev = new UserSettingsChangeEvent($user, new UserSettings($data));
                     $ev->call();
