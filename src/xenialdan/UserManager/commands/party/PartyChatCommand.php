@@ -56,7 +56,7 @@ class PartyChatCommand extends BaseSubCommand
             if ($state) $user->getPlayer()->sendMessage(TextFormat::GREEN . "You joined the party chat");
             else $user->getPlayer()->sendMessage(TextFormat::RED . "You left the party chat");
         } else {
-            $user->getPlayer()->chat("!p " . $args["message"]);
+            $user->getPlayer()->chat("!p " . strval($args["message"]));
             $user->getPlayer()->sendWhisper("Party Chat", "You can put !p, !party or !pc in front of a message to send it in the party chat!");
         }
     }
