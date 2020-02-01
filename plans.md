@@ -3,8 +3,8 @@
 - [x] add friends
 - [x] friend list, information
 - [x] party? /party invite etc
-- [ ] party functionality + events
-- [ ] party chat
+- [x] party functionality + events
+- [x] party chat
 - [ ] message friends privately / when offline
 - [ ] get notifications when joining / receiving a message
 - [x] ban users and manage bans
@@ -15,7 +15,7 @@
 - [ ] warnings and warn point system
 - [ ] predefined warns / warn templates
 - [ ] "memories" book?
-- [ ] most online time / last login?
+- [ ] recent login
 - [ ] ban evasion detection
 - [ ] report system
 - [x] user server settings

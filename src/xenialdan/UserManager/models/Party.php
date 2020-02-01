@@ -63,6 +63,8 @@ class Party
     private $ownerId;
     /** @var string */
     public $name = "Party";
+    /** @var array */
+    private $chatEnabled = [];
 
     public function __construct(User $owner, User ...$members)
     {
@@ -293,6 +295,25 @@ class Party
             if ($key > strtotime("1 minute"))//TODO config for expiration time
                 $this->requests->remove($key);
         }
+    }
+
+    public function hasChatEnabled(User $user): bool
+    {
+        return $this->chatEnabled[$user->getId()] ?? false;
+    }
+
+    /**
+     * @param User $user
+     * @return bool State after toggle
+     */
+    public function toggleChat(User $user): bool
+    {
+        if ($this->hasChatEnabled($user)) {
+            unset($this->chatEnabled[$user->getId()]);
+            return false;
+        }
+        $this->chatEnabled[$user->getId()] = true;
+        return true;
     }
 
     public function __toString()

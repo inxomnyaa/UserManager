@@ -35,6 +35,7 @@ class PartyCommand extends BaseCommand
         $this->registerSubCommand(new PartyMembersCommand("members", "List members of the party"));
         $this->registerSubCommand(new PartyInfoCommand("info", "List information about the current or a player's party"));
         $this->registerSubCommand(new PartySetOwnerCommand("setowner", "Make a party member the owner of the party"));
+        $this->registerSubCommand(new PartyChatCommand("chat", "Adds or removes you from the party chat"));
     }
 
     /**
@@ -50,7 +51,7 @@ class PartyCommand extends BaseCommand
             return;
         }
         if (empty($args)) {
-            //TODO custom entries and responses
+            //TODO remove
             $form = new SimpleForm("Party Options");
             foreach ($this->getSubCommands() as $subCommand) {
                 $form->addButton(new Button(ucfirst($subCommand->getName())));
