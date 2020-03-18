@@ -13,7 +13,7 @@ class BanStore
 {
     /**
      * userId => Ban
-     * @var Map
+     * @var Map<int,Ban>
      */
     private static $bans;
 

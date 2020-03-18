@@ -46,17 +46,17 @@ class Party
 
     /**
      * userId => User
-     * @var Map
+     * @var Map<int,User>
      */
     private $members;
     /**
      * timestamp => User
-     * @var Map
+     * @var Map<int,User>
      */
     private $invites;
     /**
      * timestamp => User
-     * @var Map
+     * @var Map<int,User>
      */
     private $requests;
     /** @var int */

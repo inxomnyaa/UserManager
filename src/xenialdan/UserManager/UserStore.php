@@ -12,7 +12,7 @@ class UserStore
 {
     /**
      * lowercasename => User
-     * @var Map
+     * @var Map<string,User>
      */
     private static $users;
 
