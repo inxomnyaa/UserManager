@@ -12,7 +12,7 @@ This plugin is still under experimental development, breaking changes can happen
 - User settings in ServerSettingsForm, containing
   - User client language
   - User nickname
-  - A profile message
+  - A profile message / signature
   - Toggle: Allow other users to find this user
   - Toggle: Allow friend requests
   - Toggle: Allow mails / personal messages
