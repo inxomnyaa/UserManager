@@ -1,8 +1,8 @@
 ---
 name: UserManager
 main: xenialdan\UserManager\Loader
-version: 0.0.0
-api: [3.9]
+version: 0.1.0
+api: [4.0.0]
 load: POSTWORLD
 softdepend:
   - DEVirion
